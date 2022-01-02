@@ -14,4 +14,5 @@ public class FfmpegProperties {
     private String path;
     private String probe;
     private String outputDir;
+    private String serverUrl;
 }

@@ -28,6 +28,8 @@ dependencies {
     // Spring framework
     implementation group: 'org.springframework', name: 'spring-core', version: springFrameworkVersion
 
+    implementation group: 'io.github.scarecraw22', name: 'jaffa-utils', version: '1.0.1'
+
     // Spring Boot
     implementation group: 'org.springframework.boot', name: 'spring-boot', version: springBootVersion
     implementation group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: springBootVersion
