@@ -45,6 +45,8 @@ dependencies {
     // Slf4j
     implementation group: 'org.slf4j', name: 'slf4j-api', version: slf4jVersion
 
+    implementation group: 'commons-fileupload', name: 'commons-fileupload', version: '1.4'
+
     // Spock
     testImplementation group: 'org.spockframework', name: 'spock-core', version: spockVersion
     testImplementation group: 'org.spockframework', name: 'spock-spring', version: spockVersion
