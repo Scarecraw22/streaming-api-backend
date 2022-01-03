@@ -28,6 +28,8 @@ dependencies {
     // Spring framework
     implementation group: 'org.springframework', name: 'spring-core', version: springFrameworkVersion
 
+    implementation group: 'io.github.scarecraw22', name: 'jaffa-utils', version: '1.0.1'
+
     // Spring Boot
     implementation group: 'org.springframework.boot', name: 'spring-boot', version: springBootVersion
     implementation group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: springBootVersion
@@ -42,6 +44,8 @@ dependencies {
 
     // Slf4j
     implementation group: 'org.slf4j', name: 'slf4j-api', version: slf4jVersion
+
+    implementation group: 'commons-fileupload', name: 'commons-fileupload', version: '1.4'
 
     // Spock
     testImplementation group: 'org.spockframework', name: 'spock-core', version: spockVersion

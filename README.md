@@ -1,5 +1,3 @@
-####
-
 
 #### Environment setup:
 
@@ -8,4 +6,9 @@
 3. Move to your desired dir and setup application.yml properties for ffmpeg and ffprobe 
 Example application.yml:
 
-![img.png](img.png)
+![img_1.png](img_1.png)
+
+#### To test:
+1. Run app
+2. Enter into web browser: http://localhost:8080/streaming-api/test/nowe
+3. Check if files are created in dir defined in application.yml
