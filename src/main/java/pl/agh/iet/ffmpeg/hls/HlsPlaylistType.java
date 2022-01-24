@@ -6,7 +6,8 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public enum HlsPlaylistType {
-    EVENT("event");
+    EVENT("event"),
+    VOD("vod");
 
     private final String value;
 }

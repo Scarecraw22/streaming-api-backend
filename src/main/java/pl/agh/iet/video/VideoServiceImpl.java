@@ -31,6 +31,11 @@ public class VideoServiceImpl implements VideoService {
 
     @Override
     public void encode(Video video) throws VideoServiceException {
+        oldWay(video);
+//        newWay(video);
+    }
+
+    private void oldWay(Video video) {
         try {
             String filename = video.getName();
             Path videoRootPath = Paths.get(ffmpegProperties.getOutputDir())
@@ -42,7 +47,8 @@ public class VideoServiceImpl implements VideoService {
                     .resolve(filename + "_%v")
                     .resolve("data%06d.ts")
                     .toString();
-            String hlsMasterFilename = filename + "_master.m3u8";
+
+            String hlsMasterFilename = filename + "_" + "master.m3u8";
             Path tmpFile = Files.createTempFile(filename, ".tmp");
 
             try (OutputStream os = new FileOutputStream(tmpFile.toFile())) {
@@ -52,21 +58,28 @@ public class VideoServiceImpl implements VideoService {
             System.out.println("HlsSegmentFilename: " + hlsSegmentFilename);
             FFmpegBuilder builder = new HlsFFmpegBuilder(new FFmpegBuilder())
                     .setInput(tmpFile.toAbsolutePath().toString())
-                    .addOutput(videoRootPath.toAbsolutePath() + filename + "_%v.m3u8")
-                    .addExtraArgs("-filter_complex", "[v:0]split=2[vtemp001][vout002];[vtemp001]scale=w=960:h=540[vout001]")
+                    .addOutput(videoRootPath.toAbsolutePath().resolve(filename) + "_%v.m3u8")
+                    .addExtraArgs("-filter_complex", "[v:0]split=3[v1][v2][v3];[v1]copy[v1out];[v2]scale=w=960:h=540[v2out];[v3]scale=w=640:h=360[v3out]")
                     .addExtraArgs("-preset", "veryfast")
                     .setGopSize("29.97")
                     .makeSegmentsEqualSized()
 
-                    // For lower quality
-                    .addExtraArgs("-map", "[vout001] v:0")
-                    .addExtraArgs("-c:v:0", "libx264")
-                    .addExtraArgs("-b:v:0", "2000k")
                     // For higher quality
-                    .addExtraArgs("-map", "[vout002] v:0")
+                    .addExtraArgs("-map", "[v1out] v:0")
+                    .addExtraArgs("-c:v:0", "libx264")
+                    .addExtraArgs("-b:v:0", "6000k")
+                    // For 960x540
+                    .addExtraArgs("-map", "[v2out] v:0")
                     .addExtraArgs("-c:v:1", "libx264")
-                    .addExtraArgs("-b:v:1", "6000k")
+                    .addExtraArgs("-b:v:1", "1500k")
+                    // For 640x360
+                    .addExtraArgs("-map", "[v3out] v:0")
+                    .addExtraArgs("-c:v:2", "libx264")
+                    .addExtraArgs("-b:v:2", "1000k")
+
                     // For audio quality
+
+                    .addExtraArgs("-map", "a:0")
                     .addExtraArgs("-map", "a:0")
                     .addExtraArgs("-map", "a:0")
                     .setAudioCodec("aac")
@@ -75,14 +88,95 @@ public class VideoServiceImpl implements VideoService {
 
                     .setFormat("hls")
                     .setHlsSegmentDuration(4)
-                    .setHlsPlaylistType(HlsPlaylistType.EVENT)
+                    .setHlsPlaylistType(HlsPlaylistType.VOD)
                     .setMasterPlaylistName(hlsMasterFilename)
 //                .addExtraArgs("-hls_base_url", ffmpegProperties.getServerUrl())
                     .addExtraArgs("-hls_segment_filename", hlsSegmentFilename)
+                    .addExtraArgs("-hls_base_url", "http://localhost:8080/streaming-api/" + filename)
                     .addExtraArgs("-use_localtime_mkdir", "1")
                     // This tells FFmpeg what streams are combined together. A space seperates each variant and everything that should be placed together
                     // is concatenated with a comma
-                    .addExtraArgs("-var_stream_map", "v:0,a:0 v:1,a:1")
+                    .addExtraArgs("-var_stream_map", "v:0,a:0 v:1,a:1 v:2,a:2")
+
+                    .done();
+
+            // Replace absolute paths in m3u8 files or find option in FFmpeg to do this for me
+
+            FFmpegExecutor executor = new FFmpegExecutor(ffmpeg, ffprobe);
+
+            executor.createJob(builder).run();
+
+            if (tmpFile.toFile().delete()) {
+                log.info("Tmp file deleted");
+            }
+
+        } catch (IOException e) {
+            throw new VideoServiceException("Error while trying to encode video with name: " + video.getName(), e);
+        }
+    }
+
+    private void newWay(Video video) {
+        try {
+            String filename = video.getName();
+            Path videoRootPath = Paths.get(ffmpegProperties.getOutputDir())
+                    .resolve(filename);
+
+            Files.createDirectories(videoRootPath);
+
+            String hlsSegmentFilename = videoRootPath
+                    .resolve(filename + "_%v")
+                    .resolve("data%06d.ts")
+                    .toString();
+
+            String hlsMasterFilename = filename + "_" + "master.m3u8";
+            Path tmpFile = Files.createTempFile(filename, ".tmp");
+
+            try (OutputStream os = new FileOutputStream(tmpFile.toFile())) {
+                IOUtils.copy(video.getContent().getInputStream(), os);
+            }
+
+            System.out.println("HlsSegmentFilename: " + hlsSegmentFilename);
+            FFmpegBuilder builder = new HlsFFmpegBuilder(new FFmpegBuilder())
+                    .setInput(tmpFile.toAbsolutePath().toString())
+                    .addOutput(videoRootPath.toAbsolutePath().resolve(filename) + "_%v.m3u8")
+                    .addExtraArgs("-filter_complex", "[v:0]split=3[v1][v2][v3];[v1]copy[v1out];[v2]scale=w=960:h=540[v2out];[v3]scale=w=640:h=360[v3out]")
+                    .addExtraArgs("-preset", "veryfast")
+                    .setGopSize("29.97")
+                    .makeSegmentsEqualSized()
+
+                    // For higher quality
+                    .addExtraArgs("-map", "[v1out] v:0")
+                    .addExtraArgs("-c:v:0", "libx264")
+                    .addExtraArgs("-b:v:0", "6000k")
+                    // For 960x540
+                    .addExtraArgs("-map", "[v2out] v:0")
+                    .addExtraArgs("-c:v:1", "libx264")
+                    .addExtraArgs("-b:v:1", "1500k")
+                    // For 640x360
+                    .addExtraArgs("-map", "[v3out] v:0")
+                    .addExtraArgs("-c:v:2", "libx264")
+                    .addExtraArgs("-b:v:2", "1000k")
+
+                    // For audio quality
+
+                    .addExtraArgs("-map", "a:0")
+                    .addExtraArgs("-map", "a:0")
+                    .addExtraArgs("-map", "a:0")
+                    .setAudioCodec("aac")
+                    .setAudioBitRate(128_000)
+                    .setAudioChannels(2)
+
+                    .setFormat("hls")
+                    .setHlsSegmentDuration(4)
+                    .setHlsPlaylistType(HlsPlaylistType.VOD)
+                    .setMasterPlaylistName(hlsMasterFilename)
+//                .addExtraArgs("-hls_base_url", ffmpegProperties.getServerUrl())
+                    .addExtraArgs("-hls_segment_filename", hlsSegmentFilename)
+                    .addExtraArgs("-hls_base_url", "http://localhost:8080/streaming-api/" + filename)
+                    .addExtraArgs("-use_localtime_mkdir", "1")
+                    // This tells FFmpeg what streams are combined together. A space seperates each variant and everything that should be placed together
+                    // is concatenated with a comma
+                    .addExtraArgs("-var_stream_map", "v:0,a:0 v:1,a:1 v:2,a:2")
 
                     .done();
 
