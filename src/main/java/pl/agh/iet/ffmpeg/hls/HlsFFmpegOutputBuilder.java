@@ -45,7 +45,8 @@ public class HlsFFmpegOutputBuilder {
     }
 
     /**
-     * Sets Group of Picture size. GOP - number of frames between two keyframes
+     * Sets Group of Picture size. GOP - number of frames between two keyframes.
+     * Should be the same as FPS for specific video
      *
      * @param size
      * @return
