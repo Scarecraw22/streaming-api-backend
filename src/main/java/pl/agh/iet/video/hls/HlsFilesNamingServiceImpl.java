@@ -1,4 +1,4 @@
-package pl.agh.iet.hls;
+package pl.agh.iet.video.hls;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

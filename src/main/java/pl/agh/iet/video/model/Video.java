@@ -1,4 +1,4 @@
-package pl.agh.iet.model;
+package pl.agh.iet.video.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

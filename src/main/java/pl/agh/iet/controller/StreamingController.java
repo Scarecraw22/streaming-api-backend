@@ -10,9 +10,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 import pl.agh.iet.ffmpeg.FfmpegProperties;
-import pl.agh.iet.file.FileUtils;
-import pl.agh.iet.model.Video;
+import pl.agh.iet.utils.FileUtils;
 import pl.agh.iet.video.VideoService;
+import pl.agh.iet.video.model.Video;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -28,7 +28,7 @@ public class StreamingController {
 
     @PostMapping(value = "/video", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public void addVideo(@ModelAttribute Video video) {
-        videoService.encode(video);
+        videoService.prepareForHlsStreaming(video);
     }
 
     @GetMapping("/test/{videoName}")
@@ -48,7 +48,7 @@ public class StreamingController {
             e.printStackTrace();
         }
         CommonsMultipartFile multipartFile = new CommonsMultipartFile(fileItem);
-        videoService.encode(new Video(videoName, multipartFile));
+        videoService.prepareForHlsStreaming(new Video(videoName, multipartFile));
 
         return ResponseEntity.ok("Elo");
     }

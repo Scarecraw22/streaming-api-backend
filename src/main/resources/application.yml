@@ -5,4 +5,4 @@ pl:
         path: "C:\\ffmpeg-n4.4-latest-win64-gpl-4.4\\bin\\ffmpeg.exe"
         probe: "C:\\ffmpeg-n4.4-latest-win64-gpl-4.4\\bin\\ffprobe.exe"
         output-dir: "C:\\Users\\owasi\\OneDrive\\Pulpit\\streaming-api-backend\\src\\main\\resources\\output\\"
-        server-url: http://localhost:8080/
+        server-url: http://localhost:8080/streaming-api/

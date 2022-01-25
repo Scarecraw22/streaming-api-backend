@@ -1,4 +1,4 @@
-package pl.agh.iet.hls;
+package pl.agh.iet.video.hls;
 
 public interface HlsFilesNamingService {
 

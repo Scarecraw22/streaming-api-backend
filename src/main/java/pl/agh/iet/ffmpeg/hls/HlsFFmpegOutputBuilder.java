@@ -3,6 +3,9 @@ package pl.agh.iet.ffmpeg.hls;
 import lombok.RequiredArgsConstructor;
 import net.bramp.ffmpeg.builder.FFmpegBuilder;
 import net.bramp.ffmpeg.builder.FFmpegOutputBuilder;
+import pl.agh.iet.ffmpeg.args.AudioCodecArg;
+import pl.agh.iet.ffmpeg.args.FormatArg;
+import pl.agh.iet.ffmpeg.args.PresetArg;
 
 @RequiredArgsConstructor
 public class HlsFFmpegOutputBuilder {
@@ -14,8 +17,8 @@ public class HlsFFmpegOutputBuilder {
         return this;
     }
 
-    public HlsFFmpegOutputBuilder setAudioCodec(String codec) {
-        output.setAudioCodec(codec);
+    public HlsFFmpegOutputBuilder setAudioCodec(AudioCodecArg codec) {
+        output.setAudioCodec(codec.getValue());
         return this;
     }
 
@@ -24,8 +27,8 @@ public class HlsFFmpegOutputBuilder {
         return this;
     }
 
-    public HlsFFmpegOutputBuilder setFormat(String format) {
-        output.setFormat(format);
+    public HlsFFmpegOutputBuilder setFormat(FormatArg format) {
+        output.setFormat(format.getValue());
         return this;
     }
 
@@ -41,6 +44,16 @@ public class HlsFFmpegOutputBuilder {
 
     public HlsFFmpegOutputBuilder setAudioBitRate(int bitRate) {
         output.setAudioBitRate(bitRate);
+        return this;
+    }
+
+    public HlsFFmpegOutputBuilder setPreset(PresetArg preset) {
+        output.addExtraArgs("-preset", preset.getValue());
+        return this;
+    }
+
+    public HlsFFmpegOutputBuilder addFilterComplex(String filterComplex) {
+        output.addExtraArgs("-filter_complex", filterComplex);
         return this;
     }
 
@@ -73,7 +86,16 @@ public class HlsFFmpegOutputBuilder {
 
     public HlsFFmpegOutputBuilder setMasterPlaylistName(String masterPlaylistName) {
         output.addExtraArgs("-master_pl_name", masterPlaylistName);
+        return this;
+    }
 
+    public HlsFFmpegOutputBuilder setHlsSegmentFilename(String hlsSegmentFilename) {
+        output.addExtraArgs("-hls_segment_filename", hlsSegmentFilename);
+        return this;
+    }
+
+    public HlsFFmpegOutputBuilder setHlsBaseUrl(String hlsBaseUrl) {
+        output.addExtraArgs("-hls_base_url", hlsBaseUrl);
         return this;
     }
 

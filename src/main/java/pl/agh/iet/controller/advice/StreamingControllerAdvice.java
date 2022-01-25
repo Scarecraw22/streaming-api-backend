@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import pl.agh.iet.video.VideoServiceException;
+import pl.agh.iet.video.metadata.MetadataServiceException;
 
 import java.time.Clock;
 import java.time.ZonedDateTime;
@@ -23,6 +24,13 @@ public class StreamingControllerAdvice {
     @ExceptionHandler(VideoServiceException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ResponseEntity<?> handle(VideoServiceException e) {
+        log.error("Exception: ", e);
+        return withStatus(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+    }
+
+    @ExceptionHandler(MetadataServiceException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ResponseEntity<?> handle(MetadataServiceException e) {
         log.error("Exception: ", e);
         return withStatus(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
     }
