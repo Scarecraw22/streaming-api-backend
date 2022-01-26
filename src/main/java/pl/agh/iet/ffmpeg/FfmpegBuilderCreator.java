@@ -29,7 +29,6 @@ public interface FfmpegBuilderCreator {
         String outputPattern;
         String hlsMasterFilename;
         String hlsSegmentFilename;
-        String hlsBaseUrl;
         int hlsSegmentDuration;
         Path input;
         PresetArg preset;

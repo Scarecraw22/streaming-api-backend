@@ -13,6 +13,7 @@ import pl.agh.iet.ffmpeg.FfmpegProperties;
 import pl.agh.iet.ffmpeg.args.PresetArg;
 import pl.agh.iet.ffmpeg.args.VideoCodecArg;
 import pl.agh.iet.ffmpeg.hls.HlsPlaylistType;
+import pl.agh.iet.file.M3U8FileEditor;
 import pl.agh.iet.utils.FileUtils;
 import pl.agh.iet.video.hls.HlsFilesNamingService;
 import pl.agh.iet.video.metadata.Metadata;
@@ -39,21 +40,22 @@ public class VideoServiceImpl implements VideoService {
     private final HlsFilesNamingService hlsFilesNamingService;
     private final MetadataService metadataService;
     private final FfmpegBuilderCreator ffmpegBuilderCreator;
+    private final M3U8FileEditor m3u8FileEditor;
 
     @Override
     public void prepareForHlsStreaming(Video video) throws VideoServiceException {
         try {
-            String baseName = video.getName();
+            String streamName = video.getName();
             Path videoRootPath = Paths.get(ffmpegProperties.getOutputDir())
-                    .resolve(baseName);
+                    .resolve(streamName);
 
             Files.createDirectories(videoRootPath);
 
-            String hlsSegmentFilename = hlsFilesNamingService.createHlsSegmentName(baseName);
+            String hlsSegmentFilename = hlsFilesNamingService.createHlsSegmentName(streamName);
 
-            String hlsMasterFilename = hlsFilesNamingService.createHlsMasterFilename(baseName);
-            String outputPattern = hlsFilesNamingService.createHlsOutputPattern(baseName);
-            Path tmpFile = Files.createTempFile(baseName, FileUtils.TMP_EXTENSION);
+            String hlsMasterFilename = hlsFilesNamingService.createHlsMasterFilename(streamName);
+            String outputPattern = hlsFilesNamingService.createHlsOutputPattern(streamName);
+            Path tmpFile = Files.createTempFile(streamName, FileUtils.TMP_EXTENSION);
 
             try (OutputStream os = new FileOutputStream(tmpFile.toFile())) {
                 IOUtils.copy(video.getContent().getInputStream(), os);
@@ -66,7 +68,7 @@ public class VideoServiceImpl implements VideoService {
             String fps = metadata.getFps().toString();
 
             FfmpegBuilderCreator.Config builderCreatorConfig = FfmpegBuilderCreator.Config.builder()
-                    .baseName(baseName)
+                    .baseName(streamName)
                     .input(tmpFile)
                     .outputPattern(outputPattern)
                     .preset(PresetArg.VERY_FAST)
@@ -77,7 +79,6 @@ public class VideoServiceImpl implements VideoService {
                     .hlsPlaylistType(HlsPlaylistType.VOD)
                     .hlsMasterFilename(hlsMasterFilename)
                     .hlsSegmentFilename(hlsSegmentFilename)
-                    .hlsBaseUrl(ffmpegProperties.getServerUrl())
                     .build();
 
             log.info("Creating FFmpeg filter based on given config: {}", builderCreatorConfig);
@@ -92,6 +93,8 @@ public class VideoServiceImpl implements VideoService {
             if (tmpFile.toFile().delete()) {
                 log.info("Tmp file deleted");
             }
+
+            m3u8FileEditor.setFileContent(streamName);
 
         } catch (IOException e) {
             throw new VideoServiceException("Error while trying to encode video with name: " + video.getName(), e);
