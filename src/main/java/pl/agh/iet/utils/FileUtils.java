@@ -1,4 +1,4 @@
-package pl.agh.iet.file;
+package pl.agh.iet.utils;
 
 import com.google.common.io.Resources;
 import lombok.NonNull;
@@ -11,6 +11,8 @@ import java.nio.file.Paths;
 
 @UtilityClass
 public class FileUtils {
+
+    public final String TMP_EXTENSION = ".tmp";
 
     public static File getFileFromResources(@NonNull String pathString) {
         try {

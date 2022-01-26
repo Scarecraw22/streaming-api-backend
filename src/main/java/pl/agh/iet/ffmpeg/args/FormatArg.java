@@ -1,13 +1,12 @@
-package pl.agh.iet.ffmpeg.hls;
+package pl.agh.iet.ffmpeg.args;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public enum HlsPlaylistType {
-    EVENT("event"),
-    VOD("vod");
+public enum FormatArg {
+    HLS("hls");
 
     private final String value;
 }

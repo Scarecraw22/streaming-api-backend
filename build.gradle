@@ -18,6 +18,7 @@ def springFrameworkVersion = '5.3.14'
 def springBootVersion = '2.6.2'
 def spockVersion = '2.1-M2-groovy-3.0'
 def slf4jVersion = '1.7.32'
+def commonsFileuploadVersion = '1.4'
 
 dependencies {
     implementation group: 'org.codehaus.groovy', name: 'groovy-all', version: groovyVersion
@@ -45,7 +46,7 @@ dependencies {
     // Slf4j
     implementation group: 'org.slf4j', name: 'slf4j-api', version: slf4jVersion
 
-    implementation group: 'commons-fileupload', name: 'commons-fileupload', version: '1.4'
+    implementation group: 'commons-fileupload', name: 'commons-fileupload', version: commonsFileuploadVersion
 
     // Spock
     testImplementation group: 'org.spockframework', name: 'spock-core', version: spockVersion
