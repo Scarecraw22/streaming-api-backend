@@ -10,4 +10,5 @@ public class StringConsts {
     public final String SEMICOLON = ";";
     public final String SLASH = "/";
     public final String SPACE = " ";
+    public final String UNDERSCORE = "_";
 }

@@ -5,7 +5,9 @@ import lombok.NonNull;
 import lombok.experimental.UtilityClass;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URISyntaxException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -19,6 +21,20 @@ public class FileUtils {
             Path path = Paths.get(Resources.getResource(pathString).toURI());
             return path.toFile();
         } catch (URISyntaxException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static File getFile(@NonNull String pathString) {
+        Path path = Paths.get(pathString);
+        return path.toFile();
+    }
+
+    public static String getFileContent(@NonNull String pathString) {
+        try {
+            return new String(Files.readAllBytes(getFile(pathString).toPath()));
+        } catch (IOException e) {
             e.printStackTrace();
             throw new RuntimeException(e);
         }

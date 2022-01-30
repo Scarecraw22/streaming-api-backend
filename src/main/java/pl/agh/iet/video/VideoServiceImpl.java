@@ -15,12 +15,15 @@ import pl.agh.iet.ffmpeg.args.VideoCodecArg;
 import pl.agh.iet.ffmpeg.hls.HlsPlaylistType;
 import pl.agh.iet.file.M3U8FileEditor;
 import pl.agh.iet.utils.FileUtils;
+import pl.agh.iet.utils.HlsConsts;
+import pl.agh.iet.utils.StringConsts;
 import pl.agh.iet.video.hls.HlsFilesNamingService;
 import pl.agh.iet.video.metadata.Metadata;
 import pl.agh.iet.video.metadata.MetadataService;
 import pl.agh.iet.video.model.Video;
 import pl.agh.iet.video.quality.Quality;
 
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -84,8 +87,6 @@ public class VideoServiceImpl implements VideoService {
             log.info("Creating FFmpeg filter based on given config: {}", builderCreatorConfig);
             FFmpegBuilder builder = ffmpegBuilderCreator.createFfmpegBuilder(builderCreatorConfig);
 
-            // Replace absolute paths in m3u8 files or find option in FFmpeg to do this for me
-
             FFmpegExecutor executor = new FFmpegExecutor(ffmpeg, ffprobe);
 
             executor.createJob(builder).run();
@@ -99,5 +100,38 @@ public class VideoServiceImpl implements VideoService {
         } catch (IOException e) {
             throw new VideoServiceException("Error while trying to encode video with name: " + video.getName(), e);
         }
+    }
+
+    @Override
+    public String getMasterFileContent(String streamName) {
+        log.info("Searching {} file for stream: {}", HlsConsts.MASTER_M3U8, streamName);
+
+        String masterFilename = streamName + StringConsts.UNDERSCORE + HlsConsts.MASTER_M3U8;
+        String content = FileUtils.getFileContent(Paths.get(ffmpegProperties.getOutputDir()).resolve(streamName).resolve(masterFilename).toString());
+
+        log.info("Found {} file for stream: {}. Content: {}", HlsConsts.MASTER_M3U8, streamName, content);
+
+        return content;
+    }
+
+    @Override
+    public String getSegmentMasterFileContent(String streamName, String segmentName) {
+        log.info("Searching {} file for stream: {}", segmentName, streamName);
+
+        String content = FileUtils.getFileContent(Paths.get(ffmpegProperties.getOutputDir()).resolve(streamName).resolve(segmentName).toString());
+
+        log.info("Found {} file for stream: {}. Content: {}", segmentName, streamName, content);
+
+        return content;
+    }
+
+    @Override
+    public File getChunk(String streamName, String segmentName, String chunkName) {
+        log.info("Searching for chunk: {}/{}/{}", streamName, segmentName, chunkName);
+
+        File file = FileUtils.getFile(Paths.get(ffmpegProperties.getOutputDir()).resolve(streamName).resolve(segmentName).resolve(chunkName).toString());
+
+        log.info("Found chunk: {}/{}/{}", streamName, segmentName, chunkName);
+        return file;
     }
 }

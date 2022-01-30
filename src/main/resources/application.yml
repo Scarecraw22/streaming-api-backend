@@ -1,3 +1,11 @@
+logging:
+  level:
+    org:
+      springframework:
+        web:
+          filter:
+            CommonsRequestLoggingFilter: TRACE
+
 pl:
   agh:
     iet:

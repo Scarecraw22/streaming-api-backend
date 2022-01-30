@@ -1,0 +1,13 @@
+spring:
+  logging:
+    level:
+      ROOT: DEBUG
+
+pl:
+  agh:
+    iet:
+      ffmpeg:
+        path: "C:\\ffmpeg-n4.4-latest-win64-gpl-4.4\\bin\\ffmpeg.exe"
+        probe: "C:\\ffmpeg-n4.4-latest-win64-gpl-4.4\\bin\\ffprobe.exe"
+        output-dir: "C:\\Users\\owasi\\OneDrive\\Pulpit\\streaming-api-backend\\src\\test\\resources\\output\\"
+        server-url: http://localhost:8080/streaming-api/

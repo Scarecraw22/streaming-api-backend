@@ -2,6 +2,8 @@ package pl.agh.iet.video;
 
 import pl.agh.iet.video.model.Video;
 
+import java.io.File;
+
 public interface VideoService {
 
     /**
@@ -15,4 +17,11 @@ public interface VideoService {
      * @throws VideoServiceException thrown when something went wrong while preparing video files
      */
     void prepareForHlsStreaming(Video video) throws VideoServiceException;
+
+    String getMasterFileContent(String streamName);
+
+    String getSegmentMasterFileContent(String streamName, String segmentName);
+
+    File getChunk(String streamName, String segmentName, String chunkName);
+
 }
