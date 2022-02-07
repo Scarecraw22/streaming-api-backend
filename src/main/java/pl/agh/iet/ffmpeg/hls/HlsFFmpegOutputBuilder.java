@@ -99,6 +99,11 @@ public class HlsFFmpegOutputBuilder {
         return this;
     }
 
+    public HlsFFmpegOutputBuilder setHlsSegmentType(String hlsSegmentType) {
+        output.addExtraArgs("-hls_segment_type", hlsSegmentType);
+        return this;
+    }
+
     public FFmpegBuilder done() {
         return output.done();
     }

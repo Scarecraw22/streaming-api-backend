@@ -13,6 +13,7 @@ import pl.agh.iet.ffmpeg.FfmpegProperties;
 import pl.agh.iet.ffmpeg.args.PresetArg;
 import pl.agh.iet.ffmpeg.args.VideoCodecArg;
 import pl.agh.iet.ffmpeg.hls.HlsPlaylistType;
+import pl.agh.iet.ffmpeg.hls.HlsSegmentType;
 import pl.agh.iet.file.M3U8FileEditor;
 import pl.agh.iet.utils.FileUtils;
 import pl.agh.iet.utils.HlsConsts;
@@ -74,7 +75,7 @@ public class VideoServiceImpl implements VideoService {
                     .baseName(streamName)
                     .input(tmpFile)
                     .outputPattern(outputPattern)
-                    .preset(PresetArg.VERY_FAST)
+                    .preset(PresetArg.SLOW)
                     .fps(fps)
                     .qualitiesFromHighest(qualitiesFromHighest)
                     .videoCodec(VideoCodecArg.LIBX_264)
@@ -82,6 +83,7 @@ public class VideoServiceImpl implements VideoService {
                     .hlsPlaylistType(HlsPlaylistType.VOD)
                     .hlsMasterFilename(hlsMasterFilename)
                     .hlsSegmentFilename(hlsSegmentFilename)
+                    .hlsSegmentType(HlsSegmentType.MPEGTS.getValue())
                     .build();
 
             log.info("Creating FFmpeg filter based on given config: {}", builderCreatorConfig);
@@ -95,7 +97,7 @@ public class VideoServiceImpl implements VideoService {
                 log.info("Tmp file deleted");
             }
 
-            m3u8FileEditor.setFileContent(streamName);
+            m3u8FileEditor.setFileContent(streamName, qualitiesFromHighest);
 
         } catch (IOException e) {
             throw new VideoServiceException("Error while trying to encode video with name: " + video.getName(), e);
@@ -109,7 +111,7 @@ public class VideoServiceImpl implements VideoService {
         String masterFilename = streamName + StringConsts.UNDERSCORE + HlsConsts.MASTER_M3U8;
         String content = FileUtils.getFileContent(Paths.get(ffmpegProperties.getOutputDir()).resolve(streamName).resolve(masterFilename).toString());
 
-        log.info("Found {} file for stream: {}. Content: {}", HlsConsts.MASTER_M3U8, streamName, content);
+        log.info("Found {} file for stream: {}. Content:\n{}", HlsConsts.MASTER_M3U8, streamName, content);
 
         return content;
     }
@@ -120,7 +122,7 @@ public class VideoServiceImpl implements VideoService {
 
         String content = FileUtils.getFileContent(Paths.get(ffmpegProperties.getOutputDir()).resolve(streamName).resolve(segmentName).toString());
 
-        log.info("Found {} file for stream: {}. Content: {}", segmentName, streamName, content);
+        log.info("Found {} file for stream: {}. Content:\n{}", segmentName, streamName, content);
 
         return content;
     }

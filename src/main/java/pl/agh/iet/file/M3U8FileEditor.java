@@ -1,5 +1,9 @@
 package pl.agh.iet.file;
 
+import pl.agh.iet.video.quality.Quality;
+
+import java.util.Collection;
+
 public interface M3U8FileEditor {
 
     /**
@@ -7,5 +11,5 @@ public interface M3U8FileEditor {
      *
      * @param videoName
      */
-    void setFileContent(String videoName);
+    void setFileContent(String videoName, Collection<Quality> qualitiesFromHighest);
 }

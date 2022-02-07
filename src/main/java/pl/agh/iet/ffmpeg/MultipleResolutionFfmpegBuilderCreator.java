@@ -36,6 +36,9 @@ public class MultipleResolutionFfmpegBuilderCreator implements FfmpegBuilderCrea
                 .setGopSize(config.getFps())
                 .makeSegmentsEqualSized();
 
+        builder = builder.addExtraArgs("-ar", "48000");
+//                .addExtraArgs("-ab", "128k")
+//                .addExtraArgs("-acodec", "aac");
         builder = addMapArgs(builder, config.getVideoCodec(), config.getQualitiesFromHighest());
 
         builder.setFormat(FormatArg.HLS)
@@ -43,6 +46,7 @@ public class MultipleResolutionFfmpegBuilderCreator implements FfmpegBuilderCrea
                 .setHlsPlaylistType(config.getHlsPlaylistType())
                 .setMasterPlaylistName(config.getHlsMasterFilename())
                 .setHlsSegmentFilename(config.getHlsSegmentFilename())
+                .setHlsSegmentType(config.getHlsSegmentType())
                 .addExtraArgs("-use_localtime_mkdir", "1");
 
         String varStreamMap = createVarStreamMap(config.getQualitiesFromHighest().size());
@@ -88,11 +92,13 @@ public class MultipleResolutionFfmpegBuilderCreator implements FfmpegBuilderCrea
 
             builder = builder.addExtraArgs("-map", mapValue)
                     .addExtraArgs(codecArg, videoCodec.getValue())
-                    .addExtraArgs(bitrateVideoArg, bitrateValue);
-        }
-
-        for (int i = 1; i <= qualities.size(); i++) {
-            builder = builder.addExtraArgs("-map", "a:0");
+                    .addExtraArgs(bitrateVideoArg, bitrateValue)
+                    .addExtraArgs("-maxrate:v:" + (i-1), "5M")
+                    .addExtraArgs("-minrate:v:" + (i-1), "5M")
+                    .addExtraArgs("-bufsize:v:" + (i-1), "10M")
+                    .addExtraArgs("-map", "a:0")
+                    .addExtraArgs("-c:a:" + (i-1), "aac")
+                    .addExtraArgs("-b:a:" + (i-1), "128k");
         }
 
         return builder;

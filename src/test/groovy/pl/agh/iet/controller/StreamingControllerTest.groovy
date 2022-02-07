@@ -13,8 +13,8 @@ class StreamingControllerTest extends AbstractControllerTest {
 
     def "create sample video"() {
         given:
-        byte[] bytes = FileUtils.getFileFromResources("movie.mp4").getBytes()
-        MockMultipartFile file = new MockMultipartFile("content", "movie.mp4", MediaType.MULTIPART_FORM_DATA_VALUE, bytes)
+        byte[] bytes = FileUtils.getFileFromResources("big_jack.mp4").getBytes()
+        MockMultipartFile file = new MockMultipartFile("content", "big_jack.mp4", MediaType.MULTIPART_FORM_DATA_VALUE, bytes)
         def multipartBuilder = MockMvcRequestBuilders.multipart("/streaming-api/video")
                 .file(file)
                 .param("name", "test")

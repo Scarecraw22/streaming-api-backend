@@ -6,6 +6,17 @@ logging:
           filter:
             CommonsRequestLoggingFilter: TRACE
 
+spring:
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 100MB
+
+server:
+  tomcat:
+    max-http-post-size: 1000000000
+    max-swallow-size: 1000000000
+
 pl:
   agh:
     iet:

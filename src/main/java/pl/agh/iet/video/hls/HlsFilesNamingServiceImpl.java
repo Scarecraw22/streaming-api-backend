@@ -4,6 +4,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import pl.agh.iet.ffmpeg.FfmpegProperties;
+import pl.agh.iet.utils.HlsConsts;
+import pl.agh.iet.utils.StringConsts;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -32,7 +34,7 @@ public class HlsFilesNamingServiceImpl implements HlsFilesNamingService {
 
     @Override
     public String createHlsMasterFilename(String baseName) {
-        String masterFilename = baseName + "_" + "master.m3u8";
+        String masterFilename = baseName + StringConsts.UNDERSCORE + HlsConsts.MASTER_M3U8;
         log.info("Created HLS master filename: {}", masterFilename);
 
         return masterFilename;

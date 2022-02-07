@@ -31,4 +31,8 @@ public enum Quality {
     private final int videoBitrate;
     private final int audioBitrate;
     private final AudioChannel audioChannel;
+
+    public String getResolution() {
+        return width + "x" + height;
+    }
 }
