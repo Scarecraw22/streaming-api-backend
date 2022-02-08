@@ -1,5 +1,6 @@
 package pl.agh.iet.controller
 
+import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
 import org.springframework.mock.web.MockMultipartFile
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
@@ -13,14 +14,14 @@ class StreamingControllerTest extends AbstractControllerTest {
 
     def "create sample video"() {
         given:
-        byte[] bytes = FileUtils.getFileFromResources("big_jack.mp4").getBytes()
-        MockMultipartFile file = new MockMultipartFile("content", "big_jack.mp4", MediaType.MULTIPART_FORM_DATA_VALUE, bytes)
+        byte[] bytes = FileUtils.getFileFromResources("movie.mp4").getBytes()
+        MockMultipartFile file = new MockMultipartFile("content", "movie.mp4", MediaType.MULTIPART_FORM_DATA_VALUE, bytes)
         def multipartBuilder = MockMvcRequestBuilders.multipart("/streaming-api/video")
                 .file(file)
                 .param("name", "test")
 
         when:
-        mvc.perform(multipartBuilder)
+        mvc.perform(multipartBuilder.header(HttpHeaders.ORIGIN, "http://any-origin.pl"))
                 .andExpect(status().isOk())
 
         then:
@@ -29,6 +30,7 @@ class StreamingControllerTest extends AbstractControllerTest {
         when:
         get()
                 .url("/streaming-api/test")
+                .withHeaders(Map.of(HttpHeaders.ORIGIN, "http://any-origin.pl"))
                 .execute()
                 .expectOk()
 
