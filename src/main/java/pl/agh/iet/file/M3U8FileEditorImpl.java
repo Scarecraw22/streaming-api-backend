@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import pl.agh.iet.ex.StreamingServerException;
 import pl.agh.iet.ffmpeg.FfmpegProperties;
 import pl.agh.iet.utils.StringConsts;
+import pl.agh.iet.video.hls.HlsFilesNamingService;
 import pl.agh.iet.video.quality.Quality;
 
 import java.io.File;
@@ -28,6 +29,7 @@ public class M3U8FileEditorImpl implements M3U8FileEditor {
     private static final Pattern RESOLUTION_PATTERN = Pattern.compile("RESOLUTION=(\\d+x\\d+)");
 
     private final FfmpegProperties ffmpegProperties;
+    private final HlsFilesNamingService hlsFilesNamingService;
 
     @Override
     public void setFileContent(String streamName, Collection<Quality> qualitiesFromHighest) {
@@ -38,11 +40,14 @@ public class M3U8FileEditorImpl implements M3U8FileEditor {
         List<File> allM3u8Files = new ArrayList<>();
 
         List<File> dirsWithChunks = new ArrayList<>();
+        String masterFilename = hlsFilesNamingService.createHlsMasterFilename(streamName);
 
         Arrays.stream(Objects.requireNonNull(rootStreamPath.toFile().listFiles()))
                 .forEach(file -> {
                     if (file.isFile()) {
-                        allM3u8Files.add(file);
+                        if (!file.getName().equalsIgnoreCase(masterFilename)) {
+                            allM3u8Files.add(file);
+                        }
                     } else {
                         dirsWithChunks.add(file);
                     }
@@ -53,7 +58,11 @@ public class M3U8FileEditorImpl implements M3U8FileEditor {
 
         log.info("Found following .m3u8 files: {}, for stream: {}", allM3u8Files.stream().map(File::getName).collect(Collectors.toList()), streamName);
 
-        File masterFile = allM3u8Files.remove(allM3u8Files.size() - 1);
+        File masterFile = Arrays.stream(Objects.requireNonNull(rootStreamPath.toFile().listFiles()))
+                .filter(file -> file.getName().equalsIgnoreCase(masterFilename))
+                .findFirst()
+                .orElseThrow(() -> new IllegalStateException("There is no masterfile present"));
+
         setupMasterFileContent(masterFile.toPath(), streamName);
 
         List<Quality> qualities = new ArrayList<>(qualitiesFromHighest);

@@ -8,9 +8,11 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import pl.agh.iet.model.CreateStreamRequest;
 import pl.agh.iet.video.VideoService;
 import pl.agh.iet.video.model.Video;
 
+import javax.validation.Valid;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -25,18 +27,18 @@ public class StreamingController {
     private final VideoService videoService;
 
     @PostMapping(value = "/video", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-    public void addVideo(@RequestParam String name, @RequestParam MultipartFile content) {
-        videoService.prepareForHlsStreaming(new Video(name, content));
+    public void addVideo(@Valid @ModelAttribute CreateStreamRequest request) {
+
+
+        videoService.prepareForHlsStreaming(Video.builder()
+                .name(request.getName())
+                .content(request.getContent())
+                .build());
     }
 
-    @GetMapping("/{streamName}")
-    public ResponseEntity<String> getMasterFile(@PathVariable String streamName) {
-        return ResponseEntity.ok(videoService.getMasterFileContent(streamName));
-    }
-
-    @GetMapping("/{streamName}/{segmentName}")
-    public ResponseEntity<String> getSegmentMaster(@PathVariable String streamName, @PathVariable String segmentName) {
-        return ResponseEntity.ok(videoService.getSegmentMasterFileContent(streamName, segmentName));
+    @GetMapping("/{streamName}/{m3u8File}")
+    public ResponseEntity<String> getM3u8File(@PathVariable String streamName, @PathVariable String m3u8File) {
+        return ResponseEntity.ok(videoService.getM3u8File(streamName, m3u8File));
     }
 
     @GetMapping("/{streamName}/{segmentName}/{chunkName}")

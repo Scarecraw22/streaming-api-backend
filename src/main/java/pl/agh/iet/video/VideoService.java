@@ -18,9 +18,7 @@ public interface VideoService {
      */
     void prepareForHlsStreaming(Video video) throws VideoServiceException;
 
-    String getMasterFileContent(String streamName);
-
-    String getSegmentMasterFileContent(String streamName, String segmentName);
+    public String getM3u8File(String streamName, String path);
 
     File getChunk(String streamName, String segmentName, String chunkName);
 

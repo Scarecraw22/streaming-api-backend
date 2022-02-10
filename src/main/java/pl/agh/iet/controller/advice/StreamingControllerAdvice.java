@@ -5,14 +5,20 @@ import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindException;
+import org.springframework.validation.FieldError;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import pl.agh.iet.utils.StringConsts;
 import pl.agh.iet.video.VideoServiceException;
 import pl.agh.iet.video.metadata.MetadataServiceException;
 
 import java.time.Clock;
 import java.time.ZonedDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @ControllerAdvice
@@ -33,6 +39,20 @@ public class StreamingControllerAdvice {
     public ResponseEntity<?> handle(MetadataServiceException e) {
         log.error("Exception: ", e);
         return withStatus(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+    }
+
+    @ExceptionHandler(BindException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<?> handle(BindException e) {
+        log.error("Exception: ", e);
+        String message = e.getMessage();
+        List<FieldError> errors = e.getBindingResult().getFieldErrors();
+        if (errors.size() > 0) {
+            message = errors.stream()
+                    .map(error -> error.getField() + StringConsts.DASH_WITH_SPACES + error.getDefaultMessage())
+                    .collect(Collectors.joining(StringConsts.SEMICOLON));
+        }
+        return withStatus(HttpStatus.BAD_REQUEST, message);
     }
 
     @ExceptionHandler(Exception.class)

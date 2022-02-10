@@ -34,7 +34,7 @@ public class HlsFilesNamingServiceImpl implements HlsFilesNamingService {
 
     @Override
     public String createHlsMasterFilename(String baseName) {
-        String masterFilename = baseName + StringConsts.UNDERSCORE + HlsConsts.MASTER_M3U8;
+        String masterFilename = HlsConsts.MASTER_M3U8;
         log.info("Created HLS master filename: {}", masterFilename);
 
         return masterFilename;

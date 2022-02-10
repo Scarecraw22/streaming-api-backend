@@ -1,13 +1,15 @@
 package pl.agh.iet.video.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Builder;
+import lombok.Value;
+import lombok.extern.jackson.Jacksonized;
 import org.springframework.web.multipart.MultipartFile;
 
-@Data
-@AllArgsConstructor
+@Value
+@Builder
+@Jacksonized
 public class Video {
 
-    private String name;
-    private MultipartFile content;
+    String name;
+    MultipartFile content;
 }

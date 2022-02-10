@@ -17,7 +17,6 @@ import pl.agh.iet.ffmpeg.hls.HlsSegmentType;
 import pl.agh.iet.file.M3U8FileEditor;
 import pl.agh.iet.utils.FileUtils;
 import pl.agh.iet.utils.HlsConsts;
-import pl.agh.iet.utils.StringConsts;
 import pl.agh.iet.video.hls.HlsFilesNamingService;
 import pl.agh.iet.video.metadata.Metadata;
 import pl.agh.iet.video.metadata.MetadataService;
@@ -105,24 +104,12 @@ public class VideoServiceImpl implements VideoService {
     }
 
     @Override
-    public String getMasterFileContent(String streamName) {
+    public String getM3u8File(String streamName, String path) {
         log.info("Searching {} file for stream: {}", HlsConsts.MASTER_M3U8, streamName);
 
-        String masterFilename = streamName + StringConsts.UNDERSCORE + HlsConsts.MASTER_M3U8;
-        String content = FileUtils.getFileContent(Paths.get(ffmpegProperties.getOutputDir()).resolve(streamName).resolve(masterFilename).toString());
+        String content = FileUtils.getFileContent(Paths.get(ffmpegProperties.getOutputDir()).resolve(streamName).resolve(path).toString());
 
-        log.info("Found {} file for stream: {}. Content:\n{}", HlsConsts.MASTER_M3U8, streamName, content);
-
-        return content;
-    }
-
-    @Override
-    public String getSegmentMasterFileContent(String streamName, String segmentName) {
-        log.info("Searching {} file for stream: {}", segmentName, streamName);
-
-        String content = FileUtils.getFileContent(Paths.get(ffmpegProperties.getOutputDir()).resolve(streamName).resolve(segmentName).toString());
-
-        log.info("Found {} file for stream: {}. Content:\n{}", segmentName, streamName, content);
+        log.info("Found {} file for stream: {}", path, streamName);
 
         return content;
     }
