@@ -7,6 +7,15 @@ logging:
             CommonsRequestLoggingFilter: TRACE
 
 spring:
+  data:
+    mongo:
+      authentication-database: admin
+    username: rootuser
+    password: rootpass
+    database: streaming
+    port: 27017
+    host: localhost
+
   servlet:
     multipart:
       max-file-size: 100MB
