@@ -8,6 +8,8 @@ import net.bramp.ffmpeg.FFprobe;
 import net.bramp.ffmpeg.builder.FFmpegBuilder;
 import org.apache.commons.io.IOUtils;
 import org.springframework.stereotype.Service;
+import pl.agh.iet.db.MetadataEntity;
+import pl.agh.iet.db.repository.MetadataRepository;
 import pl.agh.iet.ffmpeg.FfmpegBuilderCreator;
 import pl.agh.iet.ffmpeg.FfmpegProperties;
 import pl.agh.iet.ffmpeg.args.PresetArg;
@@ -30,6 +32,8 @@ import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.Collection;
 
 @Slf4j
@@ -44,9 +48,10 @@ public class VideoServiceImpl implements VideoService {
     private final MetadataService metadataService;
     private final FfmpegBuilderCreator ffmpegBuilderCreator;
     private final M3U8FileEditor m3u8FileEditor;
+    private final MetadataRepository metadataRepository;
 
     @Override
-    public void prepareForHlsStreaming(Video video) throws VideoServiceException {
+    public String prepareForHlsStreaming(Video video) throws VideoServiceException {
         try {
             String streamName = video.getName();
             Path videoRootPath = Paths.get(ffmpegProperties.getOutputDir())
@@ -64,6 +69,12 @@ public class VideoServiceImpl implements VideoService {
                 IOUtils.copy(video.getContent().getInputStream(), os);
             }
             Metadata metadata = metadataService.getMetadata(tmpFile);
+            MetadataEntity metadataEntity = new MetadataEntity();
+            metadataEntity.setStreamName(streamName);
+            metadataEntity.setPathToSources(streamName);
+            metadataEntity.setFps(metadata.getFps());
+            metadataEntity.setInitialSize(tmpFile.toFile().length());
+            metadataEntity.setDuration(metadata.getDuration());
 
             log.info("Retrieved metadata: {}", metadata);
 
@@ -97,6 +108,11 @@ public class VideoServiceImpl implements VideoService {
             }
 
             m3u8FileEditor.setFileContent(streamName, qualitiesFromHighest);
+
+            metadataEntity.setCreatedAt(ZonedDateTime.now(ZoneId.of("Europe/Warsaw")));
+            MetadataEntity savedEntity = metadataRepository.save(metadataEntity);
+
+            return savedEntity.getId();
 
         } catch (IOException e) {
             throw new VideoServiceException("Error while trying to encode video with name: " + video.getName(), e);

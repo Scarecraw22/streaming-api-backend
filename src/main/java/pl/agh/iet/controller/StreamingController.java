@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import pl.agh.iet.model.CreateStreamRequest;
+import pl.agh.iet.model.CreateStreamResponse;
 import pl.agh.iet.video.VideoService;
 import pl.agh.iet.video.model.Video;
 
@@ -27,12 +28,16 @@ public class StreamingController {
     private final VideoService videoService;
 
     @PostMapping(value = "/video", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-    public void addVideo(@Valid @ModelAttribute CreateStreamRequest request) {
+    public ResponseEntity<CreateStreamResponse> addVideo(@Valid @ModelAttribute CreateStreamRequest request) {
 
 
-        videoService.prepareForHlsStreaming(Video.builder()
+        String id = videoService.prepareForHlsStreaming(Video.builder()
                 .name(request.getName())
                 .content(request.getContent())
+                .build());
+
+        return ResponseEntity.ok(CreateStreamResponse.builder()
+                .id(id)
                 .build());
     }
 

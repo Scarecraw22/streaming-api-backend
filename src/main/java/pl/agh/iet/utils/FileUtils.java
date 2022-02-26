@@ -3,6 +3,7 @@ package pl.agh.iet.utils;
 import com.google.common.io.Resources;
 import lombok.NonNull;
 import lombok.experimental.UtilityClass;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
 import java.io.IOException;
@@ -10,7 +11,10 @@ import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.util.Optional;
 
+@Slf4j
 @UtilityClass
 public class FileUtils {
 
@@ -38,5 +42,23 @@ public class FileUtils {
             e.printStackTrace();
             throw new RuntimeException(e);
         }
+    }
+
+    public static void copyFile(Path src, Path dst) {
+        try {
+            if (dst.toFile().createNewFile()) {
+                log.info("New file created: {}", dst);
+            }
+            Files.copy(src, dst, StandardCopyOption.REPLACE_EXISTING);
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
+    }
+
+    public Optional<String> getExtension(String filename) {
+        return Optional.ofNullable(filename)
+                .filter(f -> f.contains(StringConsts.DOT))
+                .map(f -> f.substring(filename.lastIndexOf(".") + 1));
     }
 }

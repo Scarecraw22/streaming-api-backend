@@ -19,6 +19,7 @@ def springBootVersion = '2.6.3'
 def spockVersion = '2.1-M2-groovy-3.0'
 def slf4jVersion = '1.7.32'
 def commonsFileuploadVersion = '1.4'
+def testcontainersVersion = '1.16.3'
 
 dependencies {
     implementation group: 'org.codehaus.groovy', name: 'groovy-all', version: groovyVersion
@@ -53,6 +54,11 @@ dependencies {
     // Spock
     testImplementation group: 'org.spockframework', name: 'spock-core', version: spockVersion
     testImplementation group: 'org.spockframework', name: 'spock-spring', version: spockVersion
+
+    // Testcontainers
+    testImplementation group: 'org.testcontainers', name: 'testcontainers', version: testcontainersVersion
+    testImplementation group: 'org.testcontainers', name: 'mongodb', version: testcontainersVersion
+    testImplementation group: 'org.testcontainers', name: 'junit-jupiter', version: testcontainersVersion
 
     // Junit
     testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: jUnitVersion

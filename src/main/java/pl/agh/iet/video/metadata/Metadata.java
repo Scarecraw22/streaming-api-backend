@@ -11,6 +11,7 @@ public class Metadata {
 
     BigDecimal fps;
     Resolution resolution;
+    BigDecimal duration;
 
     @Value
     @Builder

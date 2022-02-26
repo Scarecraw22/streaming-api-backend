@@ -34,4 +34,5 @@ pl:
         probe: "C:\\ffmpeg-n4.4-latest-win64-gpl-4.4\\bin\\ffprobe.exe"
         output-dir: "C:\\Users\\owasi\\OneDrive\\Pulpit\\streaming-api-backend\\src\\main\\resources\\streams\\"
         server-url: http://localhost:8080/streaming-api/
-      thumbnail-dir: "C:\\Users\\owasi\\OneDrive\\Pulpit\\streaming-api-backend\\src\\main\\resources\\thumbnails\\"
+      thumbnail:
+        path: "C:\\Users\\owasi\\OneDrive\\Pulpit\\streaming-api-backend\\src\\main\\resources\\thumbnails\\"

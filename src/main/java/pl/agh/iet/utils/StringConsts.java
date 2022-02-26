@@ -7,6 +7,7 @@ public class StringConsts {
 
     public final String EMPTY_STRING = "";
     public final String DASH = "-";
+    public final String DOT = ".";
     public final String SPACE = " ";
     public final String HASH = "#";
     public final String SEMICOLON = ";";

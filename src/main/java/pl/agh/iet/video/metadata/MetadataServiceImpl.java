@@ -43,6 +43,7 @@ public class MetadataServiceImpl implements MetadataService {
                             .width(stream.width)
                             .height(stream.height)
                             .build())
+                    .duration(BigDecimal.valueOf(stream.duration).setScale(2, RoundingMode.HALF_UP))
                     .build();
 
         } catch (IOException e) {

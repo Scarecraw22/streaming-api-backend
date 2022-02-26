@@ -16,7 +16,7 @@ public interface VideoService {
      * @param video {@link Video}
      * @throws VideoServiceException thrown when something went wrong while preparing video files
      */
-    void prepareForHlsStreaming(Video video) throws VideoServiceException;
+    String prepareForHlsStreaming(Video video) throws VideoServiceException;
 
     public String getM3u8File(String streamName, String path);
 
