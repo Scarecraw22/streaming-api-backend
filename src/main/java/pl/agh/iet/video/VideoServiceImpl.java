@@ -17,6 +17,7 @@ import pl.agh.iet.ffmpeg.args.VideoCodecArg;
 import pl.agh.iet.ffmpeg.hls.HlsPlaylistType;
 import pl.agh.iet.ffmpeg.hls.HlsSegmentType;
 import pl.agh.iet.file.M3U8FileEditor;
+import pl.agh.iet.model.CreateStreamRequest;
 import pl.agh.iet.utils.FileUtils;
 import pl.agh.iet.utils.HlsConsts;
 import pl.agh.iet.video.hls.HlsFilesNamingService;
@@ -24,6 +25,7 @@ import pl.agh.iet.video.metadata.Metadata;
 import pl.agh.iet.video.metadata.MetadataService;
 import pl.agh.iet.video.model.Video;
 import pl.agh.iet.video.quality.Quality;
+import pl.agh.iet.video.thumbnail.ThumbnailService;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -49,11 +51,12 @@ public class VideoServiceImpl implements VideoService {
     private final FfmpegBuilderCreator ffmpegBuilderCreator;
     private final M3U8FileEditor m3u8FileEditor;
     private final MetadataRepository metadataRepository;
+    private final ThumbnailService thumbnailService;
 
     @Override
-    public String prepareForHlsStreaming(Video video) throws VideoServiceException {
+    public String prepareForHlsStreaming(CreateStreamRequest request) throws VideoServiceException {
         try {
-            String streamName = video.getName();
+            String streamName = request.getName();
             Path videoRootPath = Paths.get(ffmpegProperties.getOutputDir())
                     .resolve(streamName);
 
@@ -65,12 +68,12 @@ public class VideoServiceImpl implements VideoService {
             String outputPattern = hlsFilesNamingService.createHlsOutputPattern(streamName);
             Path tmpFile = Files.createTempFile(streamName, FileUtils.TMP_EXTENSION);
 
-            try (OutputStream os = new FileOutputStream(tmpFile.toFile())) {
-                IOUtils.copy(video.getContent().getInputStream(), os);
-            }
+            FileUtils.copyFile(request.getContent(), tmpFile);
+
             Metadata metadata = metadataService.getMetadata(tmpFile);
             MetadataEntity metadataEntity = new MetadataEntity();
             metadataEntity.setStreamName(streamName);
+            metadataEntity.setDescription(request.getDescription());
             metadataEntity.setPathToSources(streamName);
             metadataEntity.setFps(metadata.getFps());
             metadataEntity.setInitialSize(tmpFile.toFile().length());
@@ -112,10 +115,12 @@ public class VideoServiceImpl implements VideoService {
             metadataEntity.setCreatedAt(ZonedDateTime.now(ZoneId.of("Europe/Warsaw")));
             MetadataEntity savedEntity = metadataRepository.save(metadataEntity);
 
+            thumbnailService.saveThumbnail(request.getThumbnail(), streamName);
+
             return savedEntity.getId();
 
         } catch (IOException e) {
-            throw new VideoServiceException("Error while trying to encode video with name: " + video.getName(), e);
+            throw new VideoServiceException("Error while trying to encode video with name: " + request.getName(), e);
         }
     }
 

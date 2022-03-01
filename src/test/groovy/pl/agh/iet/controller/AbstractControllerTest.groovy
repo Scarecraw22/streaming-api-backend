@@ -21,6 +21,7 @@ import pl.agh.iet.ffmpeg.FfmpegProperties
 import pl.agh.iet.initializers.MongoDbTestInitializer
 import pl.agh.iet.utils.MvcRequestBuilder
 import pl.agh.iet.utils.MvcRestRequestBuilder
+import pl.agh.iet.video.thumbnail.ThumbnailProperties
 import spock.lang.Specification
 
 @Slf4j
@@ -41,6 +42,9 @@ abstract class AbstractControllerTest extends Specification {
 
     @Autowired
     protected FfmpegProperties ffmpegProperties
+
+    @Autowired
+    protected ThumbnailProperties thumbnailProperties
 
     MvcRequestBuilder post() {
         return new MvcRestRequestBuilder(mvc, objectMapper)

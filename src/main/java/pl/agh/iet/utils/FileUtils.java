@@ -4,9 +4,13 @@ import com.google.common.io.Resources;
 import lombok.NonNull;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.IOUtils;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -60,5 +64,27 @@ public class FileUtils {
         return Optional.ofNullable(filename)
                 .filter(f -> f.contains(StringConsts.DOT))
                 .map(f -> f.substring(filename.lastIndexOf(".") + 1));
+    }
+
+    public void copyFile(MultipartFile src, Path dst) {
+
+        try {
+            if (dst.getParent().toFile().mkdirs()) {
+                log.info("Parent dirs created for file: {}", dst);
+            }
+            if (dst.toFile().createNewFile()) {
+                log.info("Created file: {}", dst);
+            }
+        } catch (IOException e) {
+            log.error("Error while trying to copy file to dst: {}", dst);
+            throw new RuntimeException(e);
+        }
+
+        try (OutputStream os = new FileOutputStream(dst.toFile())) {
+            IOUtils.copy(src.getInputStream(), os);
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
     }
 }

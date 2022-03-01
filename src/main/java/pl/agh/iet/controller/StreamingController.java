@@ -30,11 +30,7 @@ public class StreamingController {
     @PostMapping(value = "/video", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<CreateStreamResponse> addVideo(@Valid @ModelAttribute CreateStreamRequest request) {
 
-
-        String id = videoService.prepareForHlsStreaming(Video.builder()
-                .name(request.getName())
-                .content(request.getContent())
-                .build());
+        String id = videoService.prepareForHlsStreaming(request);
 
         return ResponseEntity.ok(CreateStreamResponse.builder()
                 .id(id)

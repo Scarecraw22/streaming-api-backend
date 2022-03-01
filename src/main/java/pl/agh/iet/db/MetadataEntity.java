@@ -24,6 +24,7 @@ public class MetadataEntity {
     private String id;
     private String streamName;
     private String pathToSources;
+    private String description;
     @Field(targetType = FieldType.DECIMAL128)
     private BigDecimal duration;
     private long initialSize;

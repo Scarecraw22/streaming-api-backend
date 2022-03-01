@@ -24,11 +24,11 @@ class StreamingControllerTest extends AbstractControllerTest {
         byte[] videoBytes = FileUtils.getFileFromResources("movie.mp4").getBytes()
         MockMultipartFile video = new MockMultipartFile("content", "movie.mp4", MediaType.MULTIPART_FORM_DATA_VALUE, videoBytes)
         byte[] thumbnailBytes = FileUtils.getFileFromResources("thumbnail.jpg").getBytes()
-        MockMultipartFile thumbnail = new MockMultipartFile("thumbnail", "thumbnail.jpg", MediaType.MULTIPART_FORM_DATA_VALUE, thumbnailBytes)
+        MockMultipartFile thumbnailFile = new MockMultipartFile("thumbnail", "thumbnail.jpg", MediaType.MULTIPART_FORM_DATA_VALUE, thumbnailBytes)
 
         def multipartBuilder = MockMvcRequestBuilders.multipart("/streaming-api/video")
                 .file(video)
-                .file(thumbnail)
+                .file(thumbnailFile)
                 .param("name", "test")
                 .param("description", "Sample description")
 
@@ -45,6 +45,12 @@ class StreamingControllerTest extends AbstractControllerTest {
         noExceptionThrown()
         response.getId() != null
         !response.getId().isBlank()
+        metadataRepository.existsById(response.getId())
+        def thumbnail = Paths.get(thumbnailProperties.getPath())
+                .resolve("test")
+                .resolve("test_thumbnail.jpg")
+                .toFile()
+        thumbnail.exists()
 
         when:
         get()
@@ -58,6 +64,7 @@ class StreamingControllerTest extends AbstractControllerTest {
 
         cleanup:
         assert Paths.get(ffmpegProperties.getOutputDir()).resolve("test").deleteDir()
+        assert thumbnail.delete()
         metadataRepository.deleteAll()
     }
 }
