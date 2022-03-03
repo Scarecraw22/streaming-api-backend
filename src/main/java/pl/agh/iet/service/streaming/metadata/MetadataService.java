@@ -1,6 +1,6 @@
-package pl.agh.iet.video.metadata;
+package pl.agh.iet.service.streaming.metadata;
 
-import pl.agh.iet.video.quality.Quality;
+import pl.agh.iet.service.streaming.quality.Quality;
 
 import java.nio.file.Path;
 import java.util.Collection;

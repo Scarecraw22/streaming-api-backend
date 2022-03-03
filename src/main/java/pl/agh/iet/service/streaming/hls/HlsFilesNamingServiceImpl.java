@@ -1,11 +1,10 @@
-package pl.agh.iet.video.hls;
+package pl.agh.iet.service.streaming.hls;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import pl.agh.iet.ffmpeg.FfmpegProperties;
 import pl.agh.iet.utils.HlsConsts;
-import pl.agh.iet.utils.StringConsts;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;

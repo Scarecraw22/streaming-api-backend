@@ -1,6 +1,6 @@
 package pl.agh.iet.video.quality
 
-import pl.agh.iet.video.metadata.Metadata
+import pl.agh.iet.service.streaming.quality.Quality
 import spock.lang.Specification
 import spock.lang.Unroll
 

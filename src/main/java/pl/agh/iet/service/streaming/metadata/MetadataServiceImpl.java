@@ -1,4 +1,4 @@
-package pl.agh.iet.video.metadata;
+package pl.agh.iet.service.streaming.metadata;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -7,8 +7,8 @@ import net.bramp.ffmpeg.probe.FFmpegProbeResult;
 import net.bramp.ffmpeg.probe.FFmpegStream;
 import org.apache.commons.lang3.math.Fraction;
 import org.springframework.stereotype.Service;
-import pl.agh.iet.video.quality.HighestQualityStrategy;
-import pl.agh.iet.video.quality.Quality;
+import pl.agh.iet.service.streaming.quality.HighestQualityStrategy;
+import pl.agh.iet.service.streaming.quality.Quality;
 
 import java.io.IOException;
 import java.math.BigDecimal;

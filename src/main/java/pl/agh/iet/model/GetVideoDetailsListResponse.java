@@ -4,6 +4,7 @@ import lombok.Builder;
 import lombok.Value;
 import lombok.extern.jackson.Jacksonized;
 
+import java.time.ZonedDateTime;
 import java.util.List;
 
 @Value
@@ -11,5 +12,16 @@ import java.util.List;
 @Jacksonized
 public class GetVideoDetailsListResponse {
 
-    List<VideoDetails> detailsList;
+    List<Video> detailsList;
+
+    @Value
+    @Builder
+    @Jacksonized
+    public static class Video {
+        String id;
+        String streamName;
+        String thumbnailFilename;
+        String description;
+        ZonedDateTime createdAt;
+    }
 }

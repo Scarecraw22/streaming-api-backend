@@ -1,4 +1,4 @@
-package pl.agh.iet.video;
+package pl.agh.iet.service.streaming;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -6,7 +6,6 @@ import net.bramp.ffmpeg.FFmpeg;
 import net.bramp.ffmpeg.FFmpegExecutor;
 import net.bramp.ffmpeg.FFprobe;
 import net.bramp.ffmpeg.builder.FFmpegBuilder;
-import org.apache.commons.io.IOUtils;
 import org.springframework.stereotype.Service;
 import pl.agh.iet.db.MetadataEntity;
 import pl.agh.iet.db.repository.MetadataRepository;
@@ -18,19 +17,16 @@ import pl.agh.iet.ffmpeg.hls.HlsPlaylistType;
 import pl.agh.iet.ffmpeg.hls.HlsSegmentType;
 import pl.agh.iet.file.M3U8FileEditor;
 import pl.agh.iet.model.CreateStreamRequest;
+import pl.agh.iet.service.streaming.hls.HlsFilesNamingService;
+import pl.agh.iet.service.streaming.metadata.Metadata;
+import pl.agh.iet.service.streaming.metadata.MetadataService;
+import pl.agh.iet.service.streaming.quality.Quality;
+import pl.agh.iet.service.thumbnail.ThumbnailService;
 import pl.agh.iet.utils.FileUtils;
 import pl.agh.iet.utils.HlsConsts;
-import pl.agh.iet.video.hls.HlsFilesNamingService;
-import pl.agh.iet.video.metadata.Metadata;
-import pl.agh.iet.video.metadata.MetadataService;
-import pl.agh.iet.video.model.Video;
-import pl.agh.iet.video.quality.Quality;
-import pl.agh.iet.video.thumbnail.ThumbnailService;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -41,7 +37,7 @@ import java.util.Collection;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class VideoServiceImpl implements VideoService {
+public class StreamingServiceImpl implements StreamingService {
 
     private final FFmpeg ffmpeg;
     private final FFprobe ffprobe;
@@ -54,7 +50,7 @@ public class VideoServiceImpl implements VideoService {
     private final ThumbnailService thumbnailService;
 
     @Override
-    public String prepareForHlsStreaming(CreateStreamRequest request) throws VideoServiceException {
+    public String prepareForHlsStreaming(CreateStreamRequest request) throws StreamingServiceException {
         try {
             String streamName = request.getName();
             Path videoRootPath = Paths.get(ffmpegProperties.getOutputDir())
@@ -74,7 +70,6 @@ public class VideoServiceImpl implements VideoService {
             MetadataEntity metadataEntity = new MetadataEntity();
             metadataEntity.setStreamName(streamName);
             metadataEntity.setDescription(request.getDescription());
-            metadataEntity.setPathToSources(streamName);
             metadataEntity.setFps(metadata.getFps());
             metadataEntity.setInitialSize(tmpFile.toFile().length());
             metadataEntity.setDuration(metadata.getDuration());
@@ -113,14 +108,15 @@ public class VideoServiceImpl implements VideoService {
             m3u8FileEditor.setFileContent(streamName, qualitiesFromHighest);
 
             metadataEntity.setCreatedAt(ZonedDateTime.now(ZoneId.of("Europe/Warsaw")));
-            MetadataEntity savedEntity = metadataRepository.save(metadataEntity);
+            Path thumbnailPath = thumbnailService.saveThumbnail(request.getThumbnail(), streamName);
 
-            thumbnailService.saveThumbnail(request.getThumbnail(), streamName);
+            metadataEntity.setThumbnailFilename(thumbnailPath.toFile().getName());
+            MetadataEntity savedEntity = metadataRepository.save(metadataEntity);
 
             return savedEntity.getId();
 
         } catch (IOException e) {
-            throw new VideoServiceException("Error while trying to encode video with name: " + request.getName(), e);
+            throw new StreamingServiceException("Error while trying to encode video with name: " + request.getName(), e);
         }
     }
 

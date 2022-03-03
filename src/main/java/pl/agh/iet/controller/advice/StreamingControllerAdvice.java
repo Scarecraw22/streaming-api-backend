@@ -7,13 +7,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;
 import org.springframework.validation.FieldError;
-import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import pl.agh.iet.utils.StringConsts;
-import pl.agh.iet.video.VideoServiceException;
-import pl.agh.iet.video.metadata.MetadataServiceException;
+import pl.agh.iet.service.streaming.StreamingServiceException;
+import pl.agh.iet.service.streaming.metadata.MetadataServiceException;
 
 import java.time.Clock;
 import java.time.ZonedDateTime;
@@ -27,9 +26,9 @@ public class StreamingControllerAdvice {
 
     private final Clock clock;
 
-    @ExceptionHandler(VideoServiceException.class)
+    @ExceptionHandler(StreamingServiceException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public ResponseEntity<?> handle(VideoServiceException e) {
+    public ResponseEntity<?> handle(StreamingServiceException e) {
         log.error("Exception: ", e);
         return withStatus(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
     }

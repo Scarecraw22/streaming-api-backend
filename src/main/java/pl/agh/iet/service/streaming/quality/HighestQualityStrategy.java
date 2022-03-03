@@ -1,7 +1,7 @@
-package pl.agh.iet.video.quality;
+package pl.agh.iet.service.streaming.quality;
 
 import lombok.extern.slf4j.Slf4j;
-import pl.agh.iet.video.metadata.Metadata;
+import pl.agh.iet.service.streaming.metadata.Metadata;
 
 import java.util.Collection;
 import java.util.LinkedList;

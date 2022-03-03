@@ -1,6 +1,6 @@
 package pl.agh.iet.file;
 
-import pl.agh.iet.video.quality.Quality;
+import pl.agh.iet.service.streaming.quality.Quality;
 
 import java.util.Collection;
 

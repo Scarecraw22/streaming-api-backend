@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import pl.agh.iet.model.GetVideoDetailsListResponse;
+import pl.agh.iet.service.video.VideoService;
 
 @Slf4j
 @CrossOrigin
@@ -16,10 +17,10 @@ import pl.agh.iet.model.GetVideoDetailsListResponse;
 @RequestMapping("/video-details")
 public class VideoDetailsController {
 
-    // TODO create service
+    private final VideoService videoService;
 
     @GetMapping
     public ResponseEntity<GetVideoDetailsListResponse> getVideoDetailsList() {
-        return null;
+        return ResponseEntity.ok(videoService.getVideoDetailsList());
     }
 }

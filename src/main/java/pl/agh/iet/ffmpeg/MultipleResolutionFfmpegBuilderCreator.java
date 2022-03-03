@@ -9,7 +9,7 @@ import pl.agh.iet.ffmpeg.args.VideoCodecArg;
 import pl.agh.iet.ffmpeg.hls.HlsFFmpegBuilder;
 import pl.agh.iet.ffmpeg.hls.HlsFFmpegOutputBuilder;
 import pl.agh.iet.utils.StringConsts;
-import pl.agh.iet.video.quality.Quality;
+import pl.agh.iet.service.streaming.quality.Quality;
 
 import java.util.ArrayList;
 import java.util.Collection;

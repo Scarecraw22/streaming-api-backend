@@ -1,4 +1,4 @@
-package pl.agh.iet.video.quality;
+package pl.agh.iet.service.streaming.quality;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

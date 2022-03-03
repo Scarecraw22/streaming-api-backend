@@ -3,7 +3,7 @@ package pl.agh.iet.validation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import pl.agh.iet.model.CreateStreamRequest;
-import pl.agh.iet.stream.StreamService;
+import pl.agh.iet.service.video.VideoService;
 
 import javax.validation.Constraint;
 import javax.validation.ConstraintValidator;
@@ -27,12 +27,12 @@ public @interface CreateStreamRequestValid {
     @RequiredArgsConstructor
     class Validator implements ConstraintValidator<CreateStreamRequestValid, CreateStreamRequest> {
 
-        private final StreamService streamService;
+        private final VideoService videoService;
 
         @Override
         public boolean isValid(CreateStreamRequest request, ConstraintValidatorContext context) {
             context.disableDefaultConstraintViolation();
-            if (streamService.streamExists(request.getName())) {
+            if (videoService.streamExists(request.getName())) {
                 context.buildConstraintViolationWithTemplate("Stream already exists")
                         .addPropertyNode("name")
                         .addConstraintViolation();

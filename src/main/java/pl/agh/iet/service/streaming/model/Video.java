@@ -1,4 +1,4 @@
-package pl.agh.iet.video.model;
+package pl.agh.iet.service.streaming.model;
 
 import lombok.Builder;
 import lombok.Value;

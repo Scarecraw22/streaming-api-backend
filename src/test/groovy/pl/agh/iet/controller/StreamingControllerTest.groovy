@@ -51,6 +51,8 @@ class StreamingControllerTest extends AbstractControllerTest {
                 .resolve("test_thumbnail.jpg")
                 .toFile()
         thumbnail.exists()
+        def metadata = metadataRepository.findById(response.getId()).get()
+        metadata.getThumbnailFilename() == "test_thumbnail.jpg"
 
         when:
         get()

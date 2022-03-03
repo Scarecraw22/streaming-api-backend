@@ -1,4 +1,4 @@
-package pl.agh.iet.video.metadata;
+package pl.agh.iet.service.streaming.metadata;
 
 public class MetadataServiceException extends RuntimeException {
 

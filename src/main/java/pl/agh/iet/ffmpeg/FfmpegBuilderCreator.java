@@ -6,7 +6,7 @@ import net.bramp.ffmpeg.builder.FFmpegBuilder;
 import pl.agh.iet.ffmpeg.args.PresetArg;
 import pl.agh.iet.ffmpeg.args.VideoCodecArg;
 import pl.agh.iet.ffmpeg.hls.HlsPlaylistType;
-import pl.agh.iet.video.quality.Quality;
+import pl.agh.iet.service.streaming.quality.Quality;
 
 import java.nio.file.Path;
 import java.util.Collection;

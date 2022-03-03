@@ -6,8 +6,8 @@ import org.springframework.stereotype.Service;
 import pl.agh.iet.ex.StreamingServerException;
 import pl.agh.iet.ffmpeg.FfmpegProperties;
 import pl.agh.iet.utils.StringConsts;
-import pl.agh.iet.video.hls.HlsFilesNamingService;
-import pl.agh.iet.video.quality.Quality;
+import pl.agh.iet.service.streaming.hls.HlsFilesNamingService;
+import pl.agh.iet.service.streaming.quality.Quality;
 
 import java.io.File;
 import java.io.IOException;

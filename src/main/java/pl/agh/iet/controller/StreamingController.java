@@ -7,11 +7,9 @@ import org.springframework.core.io.Resource;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 import pl.agh.iet.model.CreateStreamRequest;
 import pl.agh.iet.model.CreateStreamResponse;
-import pl.agh.iet.video.VideoService;
-import pl.agh.iet.video.model.Video;
+import pl.agh.iet.service.streaming.StreamingService;
 
 import javax.validation.Valid;
 import java.io.File;
@@ -25,12 +23,12 @@ import java.io.FileNotFoundException;
 @RequestMapping("/streaming-api")
 public class StreamingController {
 
-    private final VideoService videoService;
+    private final StreamingService streamingService;
 
     @PostMapping(value = "/video", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<CreateStreamResponse> addVideo(@Valid @ModelAttribute CreateStreamRequest request) {
 
-        String id = videoService.prepareForHlsStreaming(request);
+        String id = streamingService.prepareForHlsStreaming(request);
 
         return ResponseEntity.ok(CreateStreamResponse.builder()
                 .id(id)
@@ -39,12 +37,12 @@ public class StreamingController {
 
     @GetMapping("/{streamName}/{m3u8File}")
     public ResponseEntity<String> getM3u8File(@PathVariable String streamName, @PathVariable String m3u8File) {
-        return ResponseEntity.ok(videoService.getM3u8File(streamName, m3u8File));
+        return ResponseEntity.ok(streamingService.getM3u8File(streamName, m3u8File));
     }
 
     @GetMapping("/{streamName}/{segmentName}/{chunkName}")
     public ResponseEntity<Resource> getChunk(@PathVariable String streamName, @PathVariable String segmentName, @PathVariable String chunkName) {
-        return getResource(videoService.getChunk(streamName, segmentName, chunkName));
+        return getResource(streamingService.getChunk(streamName, segmentName, chunkName));
     }
 
     private ResponseEntity<Resource> getResource(File file) {

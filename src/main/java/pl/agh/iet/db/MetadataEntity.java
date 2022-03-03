@@ -23,7 +23,7 @@ public class MetadataEntity {
     @Id
     private String id;
     private String streamName;
-    private String pathToSources;
+    private String thumbnailFilename;
     private String description;
     @Field(targetType = FieldType.DECIMAL128)
     private BigDecimal duration;

@@ -1,4 +1,4 @@
-package pl.agh.iet.video.thumbnail;
+package pl.agh.iet.service.thumbnail;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
