@@ -5,26 +5,33 @@ logging:
         web:
           filter:
             CommonsRequestLoggingFilter: TRACE
+        data:
+          mongodb:
+            core:
+              MongoTemplate: DEBUG
+            repository:
+              query: DEBUG
 
 spring:
   data:
     mongo:
       authentication-database: admin
-    username: rootuser
-    password: rootpass
+      auth-source: admin
+    username: user
+    password: pass
     database: streaming
     port: 27017
     host: localhost
 
   servlet:
     multipart:
-      max-file-size: 100MB
-      max-request-size: 100MB
+      max-file-size: 200MB
+      max-request-size: 200MB
 
 server:
   tomcat:
-    max-http-post-size: 1000000000
-    max-swallow-size: 1000000000
+    max-http-post-size: 2000000000
+    max-swallow-size: 2000000000
 
 pl:
   agh:

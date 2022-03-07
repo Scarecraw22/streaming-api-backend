@@ -16,7 +16,7 @@ public class MongoDbTestInitializer implements ApplicationContextInitializer<Con
                 "spring.data.password", mongoDbContainer.getPassword(),
                 "spring.data.database", mongoDbContainer.getDatabase(),
                 "spring.data.port", mongoDbContainer.getPort(),
-                "spring.data.port", mongoDbContainer.getUrl()
+                "spring.data.host", mongoDbContainer.getUrl()
         );
 
         testPropertyValues.applyTo(applicationContext.getEnvironment());

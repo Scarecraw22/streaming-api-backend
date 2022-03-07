@@ -3,6 +3,8 @@ package pl.agh.iet.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.filter.CommonsRequestLoggingFilter;
+import org.springframework.web.multipart.MultipartResolver;
+import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 
 import java.time.Clock;
 import java.time.ZoneId;
@@ -26,5 +28,12 @@ public class Config {
         filter.setAfterMessagePrefix("REQUEST DATA: ");
         filter.setAfterMessageSuffix("");
         return filter;
+    }
+
+    @Bean
+    public MultipartResolver multipartResolver() {
+        CommonsMultipartResolver multipartResolver = new CommonsMultipartResolver();
+        multipartResolver.setMaxUploadSize(209715200);
+        return multipartResolver;
     }
 }

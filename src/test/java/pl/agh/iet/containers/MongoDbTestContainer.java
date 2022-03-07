@@ -1,10 +1,8 @@
 package pl.agh.iet.containers;
 
-import com.github.dockerjava.api.model.VolumesFrom;
 import lombok.extern.slf4j.Slf4j;
 import org.testcontainers.containers.MongoDBContainer;
 
-import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -40,7 +38,6 @@ public class MongoDbTestContainer {
     }
 
     public String getUrl() {
-//        return CONTAINER.getReplicaSetUrl("streaming");
         return "localhost";
     }
 

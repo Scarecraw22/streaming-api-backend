@@ -3,6 +3,7 @@ package pl.agh.iet.controller.advice;
 import lombok.RequiredArgsConstructor;
 import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;
@@ -48,7 +49,7 @@ public class StreamingControllerAdvice {
         List<FieldError> errors = e.getBindingResult().getFieldErrors();
         if (errors.size() > 0) {
             message = errors.stream()
-                    .map(error -> error.getField() + StringConsts.DASH_WITH_SPACES + error.getDefaultMessage())
+                    .map(DefaultMessageSourceResolvable::getDefaultMessage)
                     .collect(Collectors.joining(StringConsts.SEMICOLON));
         }
         return withStatus(HttpStatus.BAD_REQUEST, message);
