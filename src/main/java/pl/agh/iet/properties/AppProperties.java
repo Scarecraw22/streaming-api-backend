@@ -1,4 +1,4 @@
-package pl.agh.iet.service.thumbnail;
+package pl.agh.iet.properties;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -9,9 +9,8 @@ import org.springframework.stereotype.Component;
 @Data
 @NoArgsConstructor
 @Component
-@ConfigurationProperties(prefix = "pl.agh.iet.thumbnail")
-public class ThumbnailProperties {
+@ConfigurationProperties(prefix = "pl.agh.iet")
+public class AppProperties {
 
-    private String path;
-    private String url;
+    private String serverUrl;
 }

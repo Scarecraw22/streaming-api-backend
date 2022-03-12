@@ -9,5 +9,7 @@ public interface ThumbnailService {
 
     Path saveThumbnail(MultipartFile thumbnail, String stream);
 
-    File getThumbnail(String stream, String thumbnailFileName) throws ThumbnailNotExistException;
+    File getThumbnail(String streamName) throws ThumbnailNotExistException;
+
+    File getThumbnailDirForStream(String streamName);
 }

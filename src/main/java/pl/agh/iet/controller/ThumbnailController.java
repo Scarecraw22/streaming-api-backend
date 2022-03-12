@@ -20,19 +20,19 @@ public class ThumbnailController {
 
     private final ThumbnailService thumbnailService;
 
-    @GetMapping("/{stream}/{thumbnailFileName}")
-    public ResponseEntity<byte[]> getThumbnail(@PathVariable String stream, @PathVariable String thumbnailFileName) {
+    @GetMapping("/{stream}")
+    public ResponseEntity<byte[]> getThumbnail(@PathVariable String stream) {
 
         try {
             HttpHeaders httpHeaders = new HttpHeaders();
             httpHeaders.setCacheControl(CacheControl.noCache().getHeaderValue());
-            byte[] bytes = FileUtils.toBytes(thumbnailService.getThumbnail(stream, thumbnailFileName));
+            byte[] bytes = FileUtils.toBytes(thumbnailService.getThumbnail(stream));
 
             return ResponseEntity.status(HttpStatus.OK)
                     .headers(httpHeaders)
                     .body(bytes);
         } catch (ThumbnailNotExistException e) {
-            log.error("Thumbnail for stream: {} and with name: {} not exists", stream, thumbnailFileName);
+            log.error("Thumbnail for stream: {} not exists", stream);
 
             return ResponseEntity.badRequest().build();
         }

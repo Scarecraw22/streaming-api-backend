@@ -8,8 +8,8 @@ import pl.agh.iet.ffmpeg.args.FormatArg;
 import pl.agh.iet.ffmpeg.args.VideoCodecArg;
 import pl.agh.iet.ffmpeg.hls.HlsFFmpegBuilder;
 import pl.agh.iet.ffmpeg.hls.HlsFFmpegOutputBuilder;
-import pl.agh.iet.utils.StringConsts;
 import pl.agh.iet.service.streaming.quality.Quality;
+import pl.agh.iet.utils.StringConsts;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -93,12 +93,12 @@ public class MultipleResolutionFfmpegBuilderCreator implements FfmpegBuilderCrea
             builder = builder.addExtraArgs("-map", mapValue)
                     .addExtraArgs(codecArg, videoCodec.getValue())
                     .addExtraArgs(bitrateVideoArg, bitrateValue)
-                    .addExtraArgs("-maxrate:v:" + (i-1), "5M")
-                    .addExtraArgs("-minrate:v:" + (i-1), "5M")
-                    .addExtraArgs("-bufsize:v:" + (i-1), "10M")
+                    .addExtraArgs("-maxrate:v:" + (i - 1), "5M")
+                    .addExtraArgs("-minrate:v:" + (i - 1), "5M")
+                    .addExtraArgs("-bufsize:v:" + (i - 1), "10M")
                     .addExtraArgs("-map", "a:0")
-                    .addExtraArgs("-c:a:" + (i-1), "aac")
-                    .addExtraArgs("-b:a:" + (i-1), "128k");
+                    .addExtraArgs("-c:a:" + (i - 1), "aac")
+                    .addExtraArgs("-b:a:" + (i - 1), "128k");
         }
 
         return builder;

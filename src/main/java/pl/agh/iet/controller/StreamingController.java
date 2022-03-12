@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pl.agh.iet.model.CreateStreamRequest;
 import pl.agh.iet.model.CreateStreamResponse;
+import pl.agh.iet.model.DeleteStreamRequest;
 import pl.agh.iet.service.streaming.StreamingService;
 
 import javax.validation.Valid;
@@ -28,7 +29,7 @@ public class StreamingController {
     @PostMapping(value = "/video", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<CreateStreamResponse> addVideo(@Valid @ModelAttribute CreateStreamRequest request) {
 
-        String id = streamingService.prepareForHlsStreaming(request);
+        String id = streamingService.createStream(request);
 
         return ResponseEntity.ok(CreateStreamResponse.builder()
                 .id(id)
@@ -43,6 +44,12 @@ public class StreamingController {
     @GetMapping("/{streamName}/{segmentName}/{chunkName}")
     public ResponseEntity<Resource> getChunk(@PathVariable String streamName, @PathVariable String segmentName, @PathVariable String chunkName) {
         return getResource(streamingService.getChunk(streamName, segmentName, chunkName));
+    }
+
+    @DeleteMapping
+    public ResponseEntity<Object> deleteStream(@RequestBody DeleteStreamRequest request) {
+        streamingService.deleteStreamById(request.getId());
+        return ResponseEntity.status(200).build();
     }
 
     private ResponseEntity<Resource> getResource(File file) {

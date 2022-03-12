@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import pl.agh.iet.db.repository.MetadataRepository;
 import pl.agh.iet.utils.FileUtils;
 import pl.agh.iet.utils.StringConsts;
 
@@ -25,6 +26,7 @@ public class ThumbnailServiceImpl implements ThumbnailService {
     );
 
     private final ThumbnailProperties thumbnailProperties;
+    private final MetadataRepository metadataRepository;
 
     @Override
     public Path saveThumbnail(MultipartFile thumbnail, String stream) {
@@ -49,13 +51,21 @@ public class ThumbnailServiceImpl implements ThumbnailService {
     }
 
     @Override
-    public File getThumbnail(String stream, String thumbnailFileName) throws ThumbnailNotExistException {
+    public File getThumbnail(String streamName) throws ThumbnailNotExistException {
 
-        return Optional.of(Paths.get(thumbnailProperties.getPath())
-                        .resolve(stream)
-                        .resolve(thumbnailFileName)
-                        .toFile())
+        return metadataRepository.findByStreamName(streamName)
+                .flatMap(entity -> Optional.of(Paths.get(thumbnailProperties.getPath())
+                        .resolve(streamName)
+                        .resolve(entity.getThumbnailFilename())
+                        .toFile()))
                 .filter(File::exists)
-                .orElseThrow(() -> new ThumbnailNotExistException("Thumbnail for stream: " + stream + " doesn't exists"));
+                .orElseThrow(() -> new ThumbnailNotExistException("Thumbnail for stream: " + streamName + " doesn't exists"));
+    }
+
+    @Override
+    public File getThumbnailDirForStream(String streamName) {
+        return Paths.get(thumbnailProperties.getPath())
+                .resolve(streamName)
+                .toFile();
     }
 }

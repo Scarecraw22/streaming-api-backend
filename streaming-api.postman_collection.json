@@ -1,0 +1,148 @@
+{
+	"info": {
+		"_postman_id": "e8b48271-c582-4658-9e17-c913d6e38cea",
+		"name": "streaming-api",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Create new video stream",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "content",
+							"type": "file",
+							"src": "/C:/Users/owasi/Downloads/new.mp4"
+						},
+						{
+							"key": "name",
+							"value": "another_movie",
+							"type": "text"
+						},
+						{
+							"key": "description",
+							"value": "Another gypsy movie",
+							"type": "text"
+						},
+						{
+							"key": "thumbnail",
+							"type": "file",
+							"src": "/C:/Users/owasi/Downloads/czolg.jpg"
+						},
+						{
+							"key": "title",
+							"value": "Superowy tytuł",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:8080/streaming-api/video",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"streaming-api",
+						"video"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get thumbnail",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/thumbnail/new_movie/new_movie_thumbnail.jpg",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"thumbnail",
+						"new_movie",
+						"new_movie_thumbnail.jpg"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get video details list",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/video-details",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"video-details"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get M3U8",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/streaming-api/another_movie/master.m3u8",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"streaming-api",
+						"another_movie",
+						"master.m3u8"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete stream",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"id\": \"622cf1031293490980568afe\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/streaming-api",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"streaming-api"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

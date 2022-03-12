@@ -1,5 +1,6 @@
 package pl.agh.iet.config;
 
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.filter.CommonsRequestLoggingFilter;
@@ -18,7 +19,9 @@ public class Config {
     }
 
     @Bean
-    public CommonsRequestLoggingFilter logFilter() {
+    public FilterRegistrationBean<CommonsRequestLoggingFilter> registrationFilter() {
+        FilterRegistrationBean<CommonsRequestLoggingFilter> registrationFilter = new FilterRegistrationBean<>();
+
         CommonsRequestLoggingFilter filter = new CommonsRequestLoggingFilter();
 
         filter.setIncludeQueryString(true);
@@ -27,7 +30,11 @@ public class Config {
         filter.setMaxPayloadLength(2048);
         filter.setAfterMessagePrefix("REQUEST DATA: ");
         filter.setAfterMessageSuffix("");
-        return filter;
+
+        registrationFilter.setFilter(filter);
+        registrationFilter.addUrlPatterns("/streaming-api/*", "/video-details");
+
+        return registrationFilter;
     }
 
     @Bean

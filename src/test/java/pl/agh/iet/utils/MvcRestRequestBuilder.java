@@ -18,6 +18,9 @@ public class MvcRestRequestBuilder implements MvcRequestBuilder {
 
     private final Map<String, String> headers = new HashMap<>();
 
+    private boolean withRequestBuilder = false;
+    private MockHttpServletRequestBuilder requestBuilder;
+
     private String url;
     private HttpMethod httpMethod;
     private MediaType contentType;
@@ -43,6 +46,12 @@ public class MvcRestRequestBuilder implements MvcRequestBuilder {
     @Override
     public MvcRequestBuilder get() {
         this.httpMethod = HttpMethod.GET;
+        return this;
+    }
+
+    @Override
+    public MvcRequestBuilder delete() {
+        this.httpMethod = HttpMethod.DELETE;
         return this;
     }
 
@@ -78,30 +87,36 @@ public class MvcRestRequestBuilder implements MvcRequestBuilder {
     }
 
     @Override
-    public MvcRequestBuilder withMultipartFile() {
-        return null;
+    public MvcRequestBuilder withRequestBuilder(MockHttpServletRequestBuilder requestBuilder) {
+        this.withRequestBuilder = true;
+        this.requestBuilder = requestBuilder;
+        return this;
     }
 
     @Override
     public MvcResponseChecker execute() throws Exception {
-        if (httpMethod == null) {
-            throw new IllegalStateException("HttpMethod is not set. Use method() method on: " + MvcRestRequestBuilder.class.getName() + " class");
-        }
-        if (url == null || url.isBlank()) {
-            throw new IllegalStateException("Url is not set. Use url method on: " + MvcRestRequestBuilder.class.getName() + " class");
-        }
-        if (contentType == null) {
-            contentType = MediaType.APPLICATION_JSON;
-        }
-        MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.request(httpMethod, url)
-                .contentType(contentType);
+        if (withRequestBuilder) {
+            return new MvcRestResponseChecker(mockMvc.perform(requestBuilder), objectMapper);
+        } else {
+            if (httpMethod == null) {
+                throw new IllegalStateException("HttpMethod is not set. Use method() method on: " + MvcRestRequestBuilder.class.getName() + " class");
+            }
+            if (url == null || url.isBlank()) {
+                throw new IllegalStateException("Url is not set. Use url method on: " + MvcRestRequestBuilder.class.getName() + " class");
+            }
+            if (contentType == null) {
+                contentType = MediaType.APPLICATION_JSON;
+            }
+            MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.request(httpMethod, url)
+                    .contentType(contentType);
 
-        requestBuilder = addHeaders(requestBuilder, headers);
-        if (body != null) {
-            requestBuilder = requestBuilder.content(body);
-        }
+            requestBuilder = addHeaders(requestBuilder, headers);
+            if (body != null) {
+                requestBuilder = requestBuilder.content(body);
+            }
 
-        return new MvcRestResponseChecker(mockMvc.perform(requestBuilder), objectMapper);
+            return new MvcRestResponseChecker(mockMvc.perform(requestBuilder), objectMapper);
+        }
     }
 
     private MockHttpServletRequestBuilder addHeaders(MockHttpServletRequestBuilder builder,

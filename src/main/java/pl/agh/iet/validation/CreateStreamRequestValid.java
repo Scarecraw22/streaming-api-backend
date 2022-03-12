@@ -11,7 +11,7 @@ import javax.validation.ConstraintValidatorContext;
 import javax.validation.Payload;
 import java.lang.annotation.*;
 
-@Target({ ElementType.TYPE })
+@Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Constraint(validatedBy = CreateStreamRequestValid.Validator.class)
 @Documented
@@ -32,12 +32,22 @@ public @interface CreateStreamRequestValid {
         @Override
         public boolean isValid(CreateStreamRequest request, ConstraintValidatorContext context) {
             context.disableDefaultConstraintViolation();
+
+            boolean containsWhiteSpace = request.getName().matches(".*\\s.*");
+            if (containsWhiteSpace) {
+                context.buildConstraintViolationWithTemplate("Name cannot contain any whitespace characters")
+                        .addPropertyNode("name")
+                        .addConstraintViolation();
+                return false;
+            }
+
             if (videoService.streamExists(request.getName())) {
                 context.buildConstraintViolationWithTemplate("Stream already exists")
                         .addPropertyNode("name")
                         .addConstraintViolation();
                 return false;
             }
+
             return true;
         }
     }

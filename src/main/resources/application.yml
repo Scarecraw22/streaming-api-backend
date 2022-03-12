@@ -43,3 +43,4 @@ pl:
         server-url: http://localhost:8080/streaming-api/
       thumbnail:
         path: "C:\\Users\\owasi\\OneDrive\\Pulpit\\streaming-api-backend\\src\\main\\resources\\thumbnails\\"
+        url: http://localhost:8080/thumbnail/

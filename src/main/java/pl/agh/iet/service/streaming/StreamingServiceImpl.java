@@ -22,6 +22,7 @@ import pl.agh.iet.service.streaming.metadata.Metadata;
 import pl.agh.iet.service.streaming.metadata.MetadataService;
 import pl.agh.iet.service.streaming.quality.Quality;
 import pl.agh.iet.service.thumbnail.ThumbnailService;
+import pl.agh.iet.service.video.VideoService;
 import pl.agh.iet.utils.FileUtils;
 import pl.agh.iet.utils.HlsConsts;
 
@@ -48,9 +49,10 @@ public class StreamingServiceImpl implements StreamingService {
     private final M3U8FileEditor m3u8FileEditor;
     private final MetadataRepository metadataRepository;
     private final ThumbnailService thumbnailService;
+    private final VideoService videoService;
 
     @Override
-    public String prepareForHlsStreaming(CreateStreamRequest request) throws StreamingServiceException {
+    public String createStream(CreateStreamRequest request) throws StreamingServiceException {
         try {
             String streamName = request.getName();
             Path videoRootPath = Paths.get(ffmpegProperties.getOutputDir())
@@ -73,6 +75,7 @@ public class StreamingServiceImpl implements StreamingService {
             metadataEntity.setFps(metadata.getFps());
             metadataEntity.setInitialSize(tmpFile.toFile().length());
             metadataEntity.setDuration(metadata.getDuration());
+            metadataEntity.setTitle(request.getTitle());
 
             log.info("Retrieved metadata: {}", metadata);
 
@@ -139,5 +142,40 @@ public class StreamingServiceImpl implements StreamingService {
 
         log.info("Found chunk: {}/{}/{}", streamName, segmentName, chunkName);
         return file;
+    }
+
+    @Override
+    public String deleteStreamById(String id) {
+
+        log.info("Starting delete process of stream with id: {}", id);
+
+        MetadataEntity metadataEntity = metadataRepository.findById(id)
+                .orElseThrow(() -> new StreamNotExistException("Stream with id: " + id + " not exists"));
+        String streamName = metadataEntity.getStreamName();
+
+        File streamDir = videoService.getStreamDir(streamName);
+
+        log.info("Deleting metadata for stream: {}", streamName);
+        metadataRepository.deleteById(metadataEntity.getId());
+
+        log.info("Deleting stream directory for stream: {}", streamName);
+        if (streamDir.exists()) {
+            FileUtils.deleteNonEmptyDir(streamDir);
+        } else {
+            log.warn("Stream directory for stream: {} not exists", streamName);
+        }
+
+        log.info("Deleting thumbnail for stream: {}", streamName);
+        File thumbnailDir = thumbnailService.getThumbnailDirForStream(streamName);
+
+        if (thumbnailDir.exists()) {
+            FileUtils.deleteNonEmptyDir(thumbnailDir);
+        } else {
+            log.warn("Thumbnail for stream: {} not exists", streamName);
+        }
+
+        log.info("Delete process of stream: {} completed", streamName);
+
+        return metadataEntity.getId();
     }
 }

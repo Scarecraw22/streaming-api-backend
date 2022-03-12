@@ -18,7 +18,8 @@ public class MongoDbTestContainer {
             ))
             .withExposedPorts(27017);
 
-    private MongoDbTestContainer() {}
+    private MongoDbTestContainer() {
+    }
 
     public synchronized void startWithStopOnShutdown() {
         if (!CONTAINER.isRunning()) {

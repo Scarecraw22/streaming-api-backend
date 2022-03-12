@@ -20,7 +20,9 @@ public class GetVideoDetailsListResponse {
     public static class Video {
         String id;
         String streamName;
-        String thumbnailFilename;
+        String title;
+        String masterLink;
+        String thumbnailLink;
         String description;
         ZonedDateTime createdAt;
     }

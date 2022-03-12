@@ -7,12 +7,16 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.Arrays;
 import java.util.Optional;
 
 @Slf4j
@@ -91,6 +95,28 @@ public class FileUtils {
         } catch (IOException e) {
             e.printStackTrace();
             throw new RuntimeException(e);
+        }
+    }
+
+    public void deleteNonEmptyDir(@NonNull File file) {
+        if (file.isDirectory()) {
+            File[] files = file.listFiles();
+
+            if (files != null) {
+                Arrays.asList(files)
+                        .forEach(FileUtils::deleteNonEmptyDir);
+            }
+
+            if (file.delete()) {
+                log.info("Directory: {} deleted", file.getAbsolutePath());
+            }
+
+        } else if (file.isFile()) {
+            if (file.exists() && file.delete()) {
+                log.info("File {} deleted", file.getAbsolutePath());
+            }
+        } else {
+            log.warn("Given object is not a file and not a directory: {}", file);
         }
     }
 }

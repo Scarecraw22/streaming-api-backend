@@ -2,6 +2,7 @@ package pl.agh.iet.utils;
 
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
 import java.util.Map;
 
@@ -13,6 +14,8 @@ public interface MvcRequestBuilder {
 
     MvcRequestBuilder get();
 
+    MvcRequestBuilder delete();
+
     MvcRequestBuilder url(String url);
 
     MvcRequestBuilder contentType(MediaType contentType);
@@ -23,7 +26,7 @@ public interface MvcRequestBuilder {
 
     MvcRequestBuilder withBodyFromFile(String pathToResource);
 
-    MvcRequestBuilder withMultipartFile();
+    MvcRequestBuilder withRequestBuilder(MockHttpServletRequestBuilder requestBuilder);
 
     MvcResponseChecker execute() throws Exception;
 

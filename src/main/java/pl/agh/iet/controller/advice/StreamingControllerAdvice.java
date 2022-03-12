@@ -11,10 +11,13 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
-import pl.agh.iet.utils.StringConsts;
+import pl.agh.iet.service.streaming.StreamNotExistException;
 import pl.agh.iet.service.streaming.StreamingServiceException;
 import pl.agh.iet.service.streaming.metadata.MetadataServiceException;
+import pl.agh.iet.service.thumbnail.ThumbnailNotExistException;
+import pl.agh.iet.utils.StringConsts;
 
+import javax.validation.ValidationException;
 import java.time.Clock;
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -41,10 +44,30 @@ public class StreamingControllerAdvice {
         return withStatus(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
     }
 
+    @ExceptionHandler(ThumbnailNotExistException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ResponseEntity<?> handle(ThumbnailNotExistException e) {
+        log.error("Exception: ", e);
+        return withStatus(HttpStatus.NOT_FOUND, e.getMessage());
+    }
+
+    @ExceptionHandler(StreamNotExistException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<?> handle(StreamNotExistException e) {
+        log.error("Exception: ", e);
+        return withStatus(HttpStatus.BAD_REQUEST, e.getMessage());
+    }
+
+    @ExceptionHandler(ValidationException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<?> handle(ValidationException e) {
+        log.error("Exception: ", e);
+        return withStatus(HttpStatus.BAD_REQUEST, e.getMessage());
+    }
+
     @ExceptionHandler(BindException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseEntity<?> handle(BindException e) {
-        log.error("Exception: ", e);
         String message = e.getMessage();
         List<FieldError> errors = e.getBindingResult().getFieldErrors();
         if (errors.size() > 0) {

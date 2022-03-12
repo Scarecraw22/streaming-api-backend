@@ -6,10 +6,11 @@ import java.io.File;
 
 public interface StreamingService {
 
-    String prepareForHlsStreaming(CreateStreamRequest request) throws StreamingServiceException;
+    String createStream(CreateStreamRequest request) throws StreamingServiceException;
 
     public String getM3u8File(String streamName, String path);
 
     File getChunk(String streamName, String segmentName, String chunkName);
 
+    String deleteStreamById(String streamName);
 }
