@@ -75,6 +75,7 @@ public class StreamingControllerAdvice {
                     .map(DefaultMessageSourceResolvable::getDefaultMessage)
                     .collect(Collectors.joining(StringConsts.SEMICOLON));
         }
+        log.info("BAD_REQUEST, message: {}", message);
         return withStatus(HttpStatus.BAD_REQUEST, message);
     }
 

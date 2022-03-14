@@ -2,31 +2,16 @@ package pl.agh.iet.controller
 
 import org.springframework.http.HttpHeaders
 import pl.agh.iet.mocks.MockCreateStreamRequest
-import pl.agh.iet.model.CreateStreamResponse
 import pl.agh.iet.model.GetVideoDetailsListResponse
-import pl.agh.iet.utils.FileUtils
-import pl.agh.iet.utils.StringConsts
 
-import java.nio.file.Paths
-
-class StreamingFlowIT extends AbstractControllerTest {
+class StreamingFlowIT extends AbstractControllerIT {
 
     def "Create then get master file get list then get thumbnail then delete stream"() {
         given:
-        MockCreateStreamRequest createStreamRequest = MockCreateStreamRequest.builder()
-                .name("test")
-                .title("Sample title")
-                .description("Sample description")
-                .video(FileUtils.getFileFromResources("movie.mp4"))
-                .thumbnail(FileUtils.getFileFromResources("thumbnail.jpg"))
-                .build()
+        MockCreateStreamRequest createStreamRequest = createStreamRequest("test", "Sample title", "Sample description")
 
         when: "Stream is created"
-        CreateStreamResponse response = withRequestBuilder(buildStreamRequest(createStreamRequest))
-                .execute()
-                .expectOk()
-                .getResponseBodyAs(CreateStreamResponse.class)
-        def streamId = response.getId()
+        def streamId = createStreamAndExpectOkThenReturnId(createStreamRequest)
 
         then: "Stream created with success and id is returned"
         noExceptionThrown()
@@ -72,31 +57,12 @@ class StreamingFlowIT extends AbstractControllerTest {
         noExceptionThrown()
 
         when: "Stream is deleted"
-        delete()
-                .url("/streaming-api")
-                .withHeaders(Map.of(HttpHeaders.ORIGIN, "http://any-origin.pl"))
-                .withBody("""
-{
-    "id": "$streamId"
-}
-""")
-                .execute()
-                .expectOk()
+        deleteStreamAndExpectSuccess(streamId)
 
         then: "All stream data is deleted"
-        def thumbnail = Paths.get(thumbnailProperties.getPath())
-                .resolve(createStreamRequest.getName())
-                .resolve(createStreamRequest.getName() + StringConsts.UNDERSCORE + createStreamRequest.getThumbnail().getName())
-                .toFile()
-        def videoChunksDir = Paths.get(ffmpegProperties.getOutputDir()).resolve("test").toFile()
-        assert !metadataRepository.existsById(streamId)
-        assert !videoChunksDir.exists()
-        assert !thumbnail.exists()
+        noExceptionThrown()
 
         cleanup:
         metadataRepository.deleteAll()
-        // In case of an exception
-        thumbnail.delete()
-        videoChunksDir.delete()
     }
 }

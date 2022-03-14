@@ -1,6 +1,7 @@
 package pl.agh.iet.service.video;
 
 import pl.agh.iet.model.GetVideoDetailsListResponse;
+import pl.agh.iet.model.SearchStreamRequest;
 
 import java.io.File;
 
@@ -11,4 +12,6 @@ public interface VideoService {
     GetVideoDetailsListResponse getVideoDetailsList();
 
     File getStreamDir(String streamName);
+
+    GetVideoDetailsListResponse filterStreams(SearchStreamRequest request);
 }
