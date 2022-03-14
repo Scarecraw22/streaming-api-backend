@@ -56,6 +56,36 @@
 			"response": []
 		},
 		{
+			"name": "Search videos",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "title",
+							"value": "Superow",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:8080/video-details/search",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"video-details",
+						"search"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "Get thumbnail",
 			"request": {
 				"method": "GET",
@@ -123,7 +153,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"id\": \"622cf1031293490980568afe\"\r\n}",
+					"raw": "{\r\n    \"id\": \"622f3a69ccfc76284ed71f37\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
