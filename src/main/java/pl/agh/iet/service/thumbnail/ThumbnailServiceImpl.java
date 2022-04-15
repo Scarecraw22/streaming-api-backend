@@ -29,21 +29,21 @@ public class ThumbnailServiceImpl implements ThumbnailService {
     private final MetadataRepository metadataRepository;
 
     @Override
-    public Path saveThumbnail(MultipartFile thumbnail, String stream) {
+    public Path saveThumbnail(MultipartFile thumbnail, String streamName) {
 
         String extension = FileUtils.getExtension(thumbnail.getOriginalFilename())
                 .orElse(null);
 
         if (extension == null || !ALLOWED_EXTENSIONS.contains(extension)) {
-            log.info("Forbidden extension: {}, of image: {}", extension, stream);
-            throw new ForbiddenThumbnailExtensionException("Forbidden extension: " + extension + " for given thumbnail: {}" + thumbnail + " for stream: {}" + stream);
+            log.info("Forbidden extension: {}, of image: {}", extension, streamName);
+            throw new ForbiddenThumbnailExtensionException("Forbidden extension: " + extension + " for given thumbnail: {}" + thumbnail + " for stream: {}" + streamName);
         }
 
-        log.info("Trying to save thumbnail for stream: {}", stream);
+        log.info("Trying to save thumbnail for stream: {}", streamName);
 
         Path thumbnailPath = Paths.get(thumbnailProperties.getPath())
-                .resolve(stream)
-                .resolve(stream + StringConsts.UNDERSCORE + "thumbnail" + StringConsts.DOT + extension);
+                .resolve(streamName)
+                .resolve(streamName + StringConsts.UNDERSCORE + "thumbnail" + StringConsts.DOT + extension);
 
         FileUtils.copyFile(thumbnail, thumbnailPath);
 

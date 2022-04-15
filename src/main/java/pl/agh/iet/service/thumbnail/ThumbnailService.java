@@ -7,7 +7,7 @@ import java.nio.file.Path;
 
 public interface ThumbnailService {
 
-    Path saveThumbnail(MultipartFile thumbnail, String stream);
+    Path saveThumbnail(MultipartFile thumbnail, String streamName);
 
     File getThumbnail(String streamName) throws ThumbnailNotExistException;
 

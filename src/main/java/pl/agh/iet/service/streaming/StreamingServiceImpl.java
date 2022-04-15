@@ -53,6 +53,8 @@ public class StreamingServiceImpl implements StreamingService {
 
     @Override
     public String createStream(CreateStreamRequest request) throws StreamingServiceException {
+        Path tmpFile = null;
+
         try {
             String streamName = request.getName();
             Path videoRootPath = Paths.get(ffmpegProperties.getOutputDir())
@@ -64,18 +66,11 @@ public class StreamingServiceImpl implements StreamingService {
 
             String hlsMasterFilename = hlsFilesNamingService.createHlsMasterFilename(streamName);
             String outputPattern = hlsFilesNamingService.createHlsOutputPattern(streamName);
-            Path tmpFile = Files.createTempFile(streamName, FileUtils.TMP_EXTENSION);
+            tmpFile = Files.createTempFile(streamName, FileUtils.TMP_EXTENSION);
 
             FileUtils.copyFile(request.getContent(), tmpFile);
 
             Metadata metadata = metadataService.getMetadata(tmpFile);
-            MetadataEntity metadataEntity = new MetadataEntity();
-            metadataEntity.setStreamName(streamName);
-            metadataEntity.setDescription(request.getDescription());
-            metadataEntity.setFps(metadata.getFps());
-            metadataEntity.setInitialSize(tmpFile.toFile().length());
-            metadataEntity.setDuration(metadata.getDuration());
-            metadataEntity.setTitle(request.getTitle());
 
             log.info("Retrieved metadata: {}", metadata);
 
@@ -104,22 +99,18 @@ public class StreamingServiceImpl implements StreamingService {
 
             executor.createJob(builder).run();
 
-            if (tmpFile.toFile().delete()) {
-                log.info("Tmp file deleted");
-            }
+            MetadataEntity metadataEntity = createMetadataEntity(request, metadata, tmpFile.toFile().length());
 
             m3u8FileEditor.setFileContent(streamName, qualitiesFromHighest);
 
-            metadataEntity.setCreatedAt(ZonedDateTime.now(ZoneId.of("Europe/Warsaw")));
-            Path thumbnailPath = thumbnailService.saveThumbnail(request.getThumbnail(), streamName);
-
-            metadataEntity.setThumbnailFilename(thumbnailPath.toFile().getName());
-            MetadataEntity savedEntity = metadataRepository.save(metadataEntity);
-
-            return savedEntity.getId();
+            return metadataEntity.getId();
 
         } catch (IOException e) {
             throw new StreamingServiceException("Error while trying to encode video with name: " + request.getName(), e);
+        } finally {
+            if (tmpFile != null && tmpFile.toFile().delete()) {
+                log.info("Tmp file deleted");
+            }
         }
     }
 
@@ -177,5 +168,21 @@ public class StreamingServiceImpl implements StreamingService {
         log.info("Delete process of stream: {} completed", streamName);
 
         return metadataEntity.getId();
+    }
+
+    private MetadataEntity createMetadataEntity(CreateStreamRequest request, Metadata metadata, long length) {
+        MetadataEntity metadataEntity = new MetadataEntity();
+        metadataEntity.setStreamName(request.getName());
+        metadataEntity.setDescription(request.getDescription());
+        metadataEntity.setFps(metadata.getFps());
+        metadataEntity.setInitialSize(length);
+        metadataEntity.setDuration(metadata.getDuration());
+        metadataEntity.setTitle(request.getTitle());
+
+        metadataEntity.setCreatedAt(ZonedDateTime.now(ZoneId.of("Europe/Warsaw")));
+        Path thumbnailPath = thumbnailService.saveThumbnail(request.getThumbnail(), request.getName());
+
+        metadataEntity.setThumbnailFilename(thumbnailPath.toFile().getName());
+        return metadataRepository.save(metadataEntity);
     }
 }

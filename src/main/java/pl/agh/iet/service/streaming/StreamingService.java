@@ -8,7 +8,7 @@ public interface StreamingService {
 
     String createStream(CreateStreamRequest request) throws StreamingServiceException;
 
-    public String getM3u8File(String streamName, String path);
+    String getM3u8File(String streamName, String path);
 
     File getChunk(String streamName, String segmentName, String chunkName);
 

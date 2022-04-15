@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import pl.agh.iet.service.streaming.StreamNotExistException;
 import pl.agh.iet.service.streaming.StreamingServiceException;
 import pl.agh.iet.service.streaming.metadata.MetadataServiceException;
+import pl.agh.iet.service.thumbnail.ForbiddenThumbnailExtensionException;
 import pl.agh.iet.service.thumbnail.ThumbnailNotExistException;
 import pl.agh.iet.utils.StringConsts;
 
@@ -77,6 +78,13 @@ public class StreamingControllerAdvice {
         }
         log.info("BAD_REQUEST, message: {}", message);
         return withStatus(HttpStatus.BAD_REQUEST, message);
+    }
+
+    @ExceptionHandler(ForbiddenThumbnailExtensionException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<?> handle(ForbiddenThumbnailExtensionException e) {
+        log.info("BAD_REQUEST, message: {}", e.getMessage());
+        return withStatus(HttpStatus.BAD_REQUEST, e.getMessage());
     }
 
     @ExceptionHandler(Exception.class)
