@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import pl.agh.iet.influxdb.StaticInfluxDbClient;
 import pl.agh.iet.model.GetVideoDetailsListResponse;
 import pl.agh.iet.model.SearchStreamRequest;
 import pl.agh.iet.service.video.VideoService;
@@ -22,6 +23,7 @@ public class VideoDetailsController {
 
     @GetMapping
     public ResponseEntity<GetVideoDetailsListResponse> getVideoDetailsList() {
+        StaticInfluxDbClient.incrementRequestCounter();
         return ResponseEntity.ok(videoService.getVideoDetailsList());
     }
 

@@ -20,6 +20,7 @@ def spockVersion = '2.1-M2-groovy-3.0'
 def slf4jVersion = '1.7.32'
 def commonsFileuploadVersion = '1.4'
 def testcontainersVersion = '1.16.3'
+def influxDbClientVersion = '5.0.0'
 
 dependencies {
     implementation group: 'org.codehaus.groovy', name: 'groovy-all', version: groovyVersion
@@ -45,6 +46,9 @@ dependencies {
     annotationProcessor group: 'org.projectlombok', name: 'lombok', version: lombokVersion
     testImplementation group: 'org.projectlombok', name: 'lombok', version: lombokVersion
     testAnnotationProcessor group: 'org.projectlombok', name: 'lombok', version: lombokVersion
+
+    // Influxdb
+    implementation group: 'com.influxdb', name: 'influxdb-client-java', version: influxDbClientVersion
 
     // Slf4j
     implementation group: 'org.slf4j', name: 'slf4j-api', version: slf4jVersion
