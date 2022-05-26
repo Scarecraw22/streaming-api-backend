@@ -11,7 +11,7 @@ import javax.validation.constraints.NotNull;
 @Value
 @Builder
 @CreateStreamRequestValid
-public class CreateStreamRequest {
+public class AddVideoRequest {
 
     @NotBlank(message = "name cannot be blank")
     String name;

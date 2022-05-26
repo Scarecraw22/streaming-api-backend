@@ -9,8 +9,8 @@ import javax.validation.constraints.NotBlank;
 @Value
 @Builder
 @Jacksonized
-public class DeleteStreamRequest {
+public class SearchVideoRequest {
 
-    @NotBlank(message = "id cannot be blank")
-    String id;
+    @NotBlank(message = "title cannot be blank")
+    String title;
 }

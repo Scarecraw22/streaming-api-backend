@@ -1,37 +1,68 @@
 package pl.agh.iet.influxdb;
 
-import com.influxdb.client.InfluxDBClient;
-import com.influxdb.client.InfluxDBClientFactory;
-import com.influxdb.client.InfluxDBClientOptions;
-import com.influxdb.client.WriteApiBlocking;
+import com.influxdb.client.*;
 import com.influxdb.client.domain.WritePrecision;
 import com.influxdb.client.write.Point;
+import com.influxdb.query.FluxTable;
+import lombok.extern.slf4j.Slf4j;
 
-import java.util.function.Consumer;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 
+@Slf4j
 public class StaticInfluxDbClient {
+
+    private static final String _VALUE = "_value";
+    private static final String CURRENT_COUNTER_QUERY = "from(bucket:\"streaming-api\") "
+            + "|> range(start: 0) "
+            + "|> filter(fn: (r) => r._measurement == \"request-counter\")"
+            + "|> sum()";
 
     public static final InfluxDBClientOptions OPTIONS = InfluxDBClientOptions.builder()
             .url("http://localhost:8086")
-            .authenticate("streaming-api-user", "password".toCharArray())
+            .authenticate("admin", "password".toCharArray())
             .bucket("streaming-api")
-            .org("AGH")
+            .org("agh")
             .build();
 
     public static void incrementRequestCounter() {
-        writeOperation(client -> {
+        try (InfluxDBClient client = createClientInstance()) {
+
             WriteApiBlocking writeApi = client.getWriteApiBlocking();
+
             Point point = Point.measurement("request-counter")
                     .time(System.currentTimeMillis(), WritePrecision.MS)
                     .addField("current", 1);
 
             writeApi.writePoint(point);
-        });
+
+        }
     }
 
-    private static void writeOperation(Consumer<InfluxDBClient> consumer) {
+    public static long getCurrentRequestCounter() {
         try (InfluxDBClient client = createClientInstance()) {
-            consumer.accept(client);
+            return getCurrentRequestCounter(client);
+        }
+    }
+
+    private static long getCurrentRequestCounter(InfluxDBClient client) {
+
+        QueryApi queryApi = client.getQueryApi();
+        List<FluxTable> result = queryApi.query(CURRENT_COUNTER_QUERY);
+        if (!result.isEmpty()) {
+
+            return Optional.ofNullable(result.get(0))
+                    .map(FluxTable::getRecords)
+                    .orElse(Collections.emptyList())
+                    .stream()
+                    .findFirst()
+                    .map(fluxRecord -> fluxRecord.getValueByKey(_VALUE))
+                    .map(Long.class::cast)
+                    .orElse(0L);
+
+        } else {
+            return 0L;
         }
     }
 

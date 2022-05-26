@@ -2,7 +2,7 @@ package pl.agh.iet.validation;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import pl.agh.iet.model.CreateStreamRequest;
+import pl.agh.iet.model.AddVideoRequest;
 import pl.agh.iet.service.video.VideoService;
 
 import javax.validation.Constraint;
@@ -25,12 +25,12 @@ public @interface CreateStreamRequestValid {
 
     @Component
     @RequiredArgsConstructor
-    class Validator implements ConstraintValidator<CreateStreamRequestValid, CreateStreamRequest> {
+    class Validator implements ConstraintValidator<CreateStreamRequestValid, AddVideoRequest> {
 
         private final VideoService videoService;
 
         @Override
-        public boolean isValid(CreateStreamRequest request, ConstraintValidatorContext context) {
+        public boolean isValid(AddVideoRequest request, ConstraintValidatorContext context) {
             context.disableDefaultConstraintViolation();
 
             boolean containsWhiteSpace = request.getName().matches(".*\\s.*");

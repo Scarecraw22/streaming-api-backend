@@ -16,7 +16,7 @@ import pl.agh.iet.ffmpeg.args.VideoCodecArg;
 import pl.agh.iet.ffmpeg.hls.HlsPlaylistType;
 import pl.agh.iet.ffmpeg.hls.HlsSegmentType;
 import pl.agh.iet.file.M3U8FileEditor;
-import pl.agh.iet.model.CreateStreamRequest;
+import pl.agh.iet.model.AddVideoRequest;
 import pl.agh.iet.service.streaming.hls.HlsFilesNamingService;
 import pl.agh.iet.service.streaming.metadata.Metadata;
 import pl.agh.iet.service.streaming.metadata.MetadataService;
@@ -52,7 +52,7 @@ public class StreamingServiceImpl implements StreamingService {
     private final VideoService videoService;
 
     @Override
-    public String createStream(CreateStreamRequest request) throws StreamingServiceException {
+    public String addVideo(AddVideoRequest request) throws StreamingServiceException {
         Path tmpFile = null;
 
         try {
@@ -170,7 +170,7 @@ public class StreamingServiceImpl implements StreamingService {
         return metadataEntity.getId();
     }
 
-    private MetadataEntity createMetadataEntity(CreateStreamRequest request, Metadata metadata, long length) {
+    private MetadataEntity createMetadataEntity(AddVideoRequest request, Metadata metadata, long length) {
         MetadataEntity metadataEntity = new MetadataEntity();
         metadataEntity.setStreamName(request.getName());
         metadataEntity.setDescription(request.getDescription());

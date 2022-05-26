@@ -20,7 +20,7 @@ import pl.agh.iet.db.repository.MetadataRepository
 import pl.agh.iet.ffmpeg.FfmpegProperties
 import pl.agh.iet.initializers.MongoDbTestInitializer
 import pl.agh.iet.mocks.MockCreateStreamRequest
-import pl.agh.iet.model.CreateStreamResponse
+import pl.agh.iet.model.AddVideoResponse
 import pl.agh.iet.model.GetVideoDetailsListResponse
 import pl.agh.iet.service.thumbnail.ThumbnailProperties
 import pl.agh.iet.utils.FileUtils
@@ -125,10 +125,10 @@ abstract class AbstractControllerIT extends Specification {
     protected String createStreamAndExpectOkThenReturnId(String streamName, String title, String description) {
         MockCreateStreamRequest createStreamRequest = createStreamRequest(streamName, title, description)
 
-        CreateStreamResponse response = withRequestBuilder(buildStreamRequest(createStreamRequest))
+        AddVideoResponse response = withRequestBuilder(buildStreamRequest(createStreamRequest))
                 .execute()
                 .expectOk()
-                .getResponseBodyAs(CreateStreamResponse.class)
+                .getResponseBodyAs(AddVideoResponse.class)
 
         return response.getId()
     }

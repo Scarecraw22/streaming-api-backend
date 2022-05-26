@@ -7,9 +7,9 @@ import org.springframework.core.io.Resource;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import pl.agh.iet.model.CreateStreamRequest;
-import pl.agh.iet.model.CreateStreamResponse;
-import pl.agh.iet.model.DeleteStreamRequest;
+import pl.agh.iet.model.AddVideoRequest;
+import pl.agh.iet.model.AddVideoResponse;
+import pl.agh.iet.model.DeleteVideoRequest;
 import pl.agh.iet.service.streaming.StreamingService;
 
 import javax.validation.Valid;
@@ -27,11 +27,11 @@ public class StreamingController {
     private final StreamingService streamingService;
 
     @PostMapping(value = "/video", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-    public ResponseEntity<CreateStreamResponse> addVideo(@Valid @ModelAttribute CreateStreamRequest request) {
+    public ResponseEntity<AddVideoResponse> addVideo(@Valid @ModelAttribute AddVideoRequest request) {
 
-        String id = streamingService.createStream(request);
+        String id = streamingService.addVideo(request);
 
-        return ResponseEntity.ok(CreateStreamResponse.builder()
+        return ResponseEntity.ok(AddVideoResponse.builder()
                 .id(id)
                 .build());
     }
@@ -47,7 +47,7 @@ public class StreamingController {
     }
 
     @DeleteMapping
-    public ResponseEntity<Object> deleteStream(@RequestBody DeleteStreamRequest request) {
+    public ResponseEntity<Object> deleteStream(@RequestBody DeleteVideoRequest request) {
         streamingService.deleteStreamById(request.getId());
         return ResponseEntity.status(200).build();
     }
