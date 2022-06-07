@@ -7,8 +7,10 @@ services:
     ports:
       - 27017:27017
     volumes:
-      - data:/data
+      - ./conf/init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
+      - ./mongo-volume:/data/db
     environment:
+      - MONGO_INITDB_DATABASE=streaming-api-backend
       - MONGO_INITDB_ROOT_USERNAME=rootuser
       - MONGO_INITDB_ROOT_PASSWORD=rootpass
       - MONGO_DATABASE_USERNAME=user
@@ -94,6 +96,31 @@ services:
     volumes:
       - ./logs:/usr/share/logs/streaming-api-backend
       - ./logstash_pipeline/:/usr/share/logstash/pipeline
+
+  prometheus:
+    container_name: prometheus
+    image: prom/prometheus
+    ports:
+      - 9090:9090
+    restart: always
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+
+  streaming-api-backend:
+    container_name: streaming-api-backend
+    image: streaming-api-backend
+    ports:
+      - 8080:8080
+    restart: always
+    volumes:
+      - ./conf/application.yml:/usr/share/streaming-api-backend/application.yml
+    environment:
+      JAVA_OPTS: -Dspring.config.location=/usr/share/streaming-api-backend -Dspring.config.name=application.yml
+    depends_on:
+      - mongo
+      - elasticsearch
+      - influxdb
+
 
 networks:
   default:

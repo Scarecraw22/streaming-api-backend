@@ -46,8 +46,7 @@ public class MultipleResolutionFfmpegBuilderCreator implements FfmpegBuilderCrea
                 .setHlsPlaylistType(config.getHlsPlaylistType())
                 .setMasterPlaylistName(config.getHlsMasterFilename())
                 .setHlsSegmentFilename(config.getHlsSegmentFilename())
-                .setHlsSegmentType(config.getHlsSegmentType())
-                .addExtraArgs("-use_localtime_mkdir", "1");
+                .setHlsSegmentType(config.getHlsSegmentType());
 
         String varStreamMap = createVarStreamMap(config.getQualitiesFromHighest().size());
 

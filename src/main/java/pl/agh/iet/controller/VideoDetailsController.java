@@ -23,8 +23,8 @@ public class VideoDetailsController {
 
     @GetMapping
     public ResponseEntity<GetVideoDetailsListResponse> getVideoDetailsList() {
-        StaticInfluxDbClient.incrementRequestCounter();
-        log.info("Current counter: {}", StaticInfluxDbClient.getCurrentRequestCounter());
+//        StaticInfluxDbClient.incrementRequestCounter();
+//        log.info("Current counter: {}", StaticInfluxDbClient.getCurrentRequestCounter());
         return ResponseEntity.ok(videoService.getVideoDetailsList());
     }
 

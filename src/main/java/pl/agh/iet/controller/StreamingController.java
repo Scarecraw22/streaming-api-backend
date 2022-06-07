@@ -36,14 +36,14 @@ public class StreamingController {
                 .build());
     }
 
-    @GetMapping("/{streamName}/{m3u8File}")
-    public ResponseEntity<String> getM3u8File(@PathVariable String streamName, @PathVariable String m3u8File) {
-        return ResponseEntity.ok(streamingService.getM3u8File(streamName, m3u8File));
+    @GetMapping("/{videoName}/{m3u8File}")
+    public ResponseEntity<String> getM3u8File(@PathVariable String videoName, @PathVariable String m3u8File) {
+        return ResponseEntity.ok(streamingService.getM3u8File(videoName, m3u8File));
     }
 
-    @GetMapping("/{streamName}/{segmentName}/{chunkName}")
-    public ResponseEntity<Resource> getChunk(@PathVariable String streamName, @PathVariable String segmentName, @PathVariable String chunkName) {
-        return getResource(streamingService.getChunk(streamName, segmentName, chunkName));
+    @GetMapping("/{videoName}/{segmentName}/{chunkName}")
+    public ResponseEntity<Resource> getChunk(@PathVariable String videoName, @PathVariable String segmentName, @PathVariable String chunkName) {
+        return getResource(streamingService.getChunk(videoName, segmentName, chunkName));
     }
 
     @DeleteMapping

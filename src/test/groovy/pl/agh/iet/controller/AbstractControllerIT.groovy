@@ -195,4 +195,34 @@ abstract class AbstractControllerIT extends Specification {
 
         return detailsList;
     }
+
+    protected GetVideoDetailsListResponse getAll() {
+        GetVideoDetailsListResponse videoDetailsResponse = get()
+                .url("/video-details")
+                .withHeaders(Map.of(HttpHeaders.ORIGIN, "http://any-origin.pl"))
+                .execute()
+                .expectOk()
+                .getResponseBodyAs(GetVideoDetailsListResponse.class)
+
+        return videoDetailsResponse
+    }
+
+    protected void deleteAll() {
+        Optional.of(getAll())
+                .map(details -> details.getDetailsList())
+                .orElse([])
+                .stream()
+                .map(details -> details.getId())
+                .forEach(id -> {
+                    delete()
+                            .url("/streaming-api")
+                            .withHeaders(Map.of(HttpHeaders.ORIGIN, "http://any-origin.pl"))
+                            .withBody("""
+{
+    "id": "$id"
+}1
+""")
+                            .execute()
+                })
+    }
 }

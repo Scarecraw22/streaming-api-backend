@@ -6,6 +6,10 @@ import pl.agh.iet.model.GetVideoDetailsListResponse
 
 class StreamingFlowIT extends AbstractControllerIT {
 
+    def setup() {
+        deleteAll()
+    }
+
     def "Create then get master file get list then get thumbnail then delete stream"() {
         given:
         MockCreateStreamRequest createStreamRequest = createStreamRequest("test", "Sample title", "Sample description")
