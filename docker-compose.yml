@@ -7,8 +7,10 @@ services:
     ports:
       - 27017:27017
     volumes:
-      - data:/data
+      - ./conf/init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
+      - ./mongo-volume:/data/db
     environment:
+      - MONGO_INITDB_DATABASE=streaming-api-backend
       - MONGO_INITDB_ROOT_USERNAME=rootuser
       - MONGO_INITDB_ROOT_PASSWORD=rootpass
       - MONGO_DATABASE_USERNAME=user
@@ -23,9 +25,115 @@ services:
       - ME_CONFIG_MONGODB_ADMINUSERNAME=rootuser
       - ME_CONFIG_MONGODB_ADMINPASSWORD=rootpass
       - ME_CONFIG_MONGODB_SERVER=mongodb
-volumes:
-  data: {}
+
+  influxdb:
+    image: influxdb:latest
+    container_name: influxdb
+    ports:
+      - 8086:8086
+    volumes:
+      - influxdb-storage:/var/lib/influxdb
+    environment:
+      - INFLUXDB_DB=streaming-api
+      - DOCKER_INFLUXDB_INIT_MODE=setup
+      - DOCKER_INFLUXDB_INIT_USERNAME=admin
+      - DOCKER_INFLUXDB_INIT_PASSWORD=password
+      - DOCKER_INFLUXDB_INIT_ORG=agh
+      - DOCKER_INFLUXDB_INIT_BUCKET=streaming-api
+      - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=admin_token
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      - 3000:3000
+    volumes:
+      - grafana-storage:/var/lib/grafana
+      - ./grafana-provisioning/:/etc/grafana/provisioning
+    depends_on:
+      - influxdb
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.4.0
+    container_name: elasticsearch
+    restart: always
+    environment:
+      - xpack.security.enabled=false
+      - discovery.type=single-node
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536
+        hard: 65536
+    cap_add:
+      - IPC_LOCK
+    volumes:
+      - elasticsearch-data-volume:/usr/share/elasticsearch/data
+    ports:
+      - 9200:9200
+
+  kibana:
+    container_name: kibana
+    image: docker.elastic.co/kibana/kibana:7.4.0
+    restart: always
+    environment:
+      - ELASTICSEARCH_hosts=http://elasticsearch:9200
+    ports:
+      - 5601:5601
+    depends_on:
+      - elasticsearch
+
+  logstash:
+    image: logstash:7.9.2
+    container_name: logstash
+    command: logstash -f /usr/share/logstash/pipeline/logstash.conf
+    ports:
+      - 5000:5000
+    volumes:
+      - ./logs:/usr/share/logs/streaming-api-backend
+      - ./logstash_pipeline/:/usr/share/logstash/pipeline
+
+  prometheus:
+    container_name: prometheus
+    image: prom/prometheus
+    ports:
+      - 9090:9090
+    restart: always
+    volumes:
+      - ./prometheus/prometheus.yml:/prometheus/prometheus.yml
+    command:
+      - '--config.file=/prometheus/prometheus.yml'
+    depends_on:
+      - streaming-api-backend
+
+  streaming-api-backend:
+    container_name: streaming-api-backend
+    image: streaming-api-backend
+    ports:
+      - 8080:8080
+    restart: always
+    volumes:
+      - ./conf/application.yml:/usr/share/streaming-api-backend/application.yml
+    environment:
+      JAVA_OPTS: -Dspring.config.location=/usr/share/streaming-api-backend -Dspring.config.name=application.yml
+    depends_on:
+      - mongo
+      - elasticsearch
+      - influxdb
+
 
 networks:
   default:
-    name: mongodb_network
+    name: streaming-api-network
+
+volumes:
+  influxdb-storage:
+  chronograf-storage:
+  grafana-storage:
+  elasticsearch-data-volume:
+    driver: local
+  data: {}

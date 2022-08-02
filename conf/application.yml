@@ -1,0 +1,49 @@
+logging:
+  level:
+    org:
+      springframework:
+        web:
+          filter:
+            CommonsRequestLoggingFilter: TRACE
+        data:
+          mongodb:
+            core:
+              MongoTemplate: DEBUG
+            repository:
+              query: DEBUG
+
+spring:
+  data:
+    mongodb:
+      authentication-database: admin
+      uri: mongodb://streaming-api-user:streaming-api-password@mongodb:27017/streaming-api-backend
+
+  servlet:
+    multipart:
+      max-file-size: 200MB
+      max-request-size: 200MB
+
+server:
+  tomcat:
+    max-http-post-size: 2000000000
+    max-swallow-size: 2000000000
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+    health:
+      show-details: always
+
+pl:
+  agh:
+    iet:
+      ffmpeg:
+        path: "ffmpeg-master-latest-linux64-gpl/bin/ffmpeg"
+        probe: "ffmpeg-master-latest-linux64-gpl/bin/ffprobe"
+        output-dir: "/usr/share/streams/"
+        server-url: http://localhost:8080/streaming-api/
+      thumbnail:
+        path: "/usr/share/thumbnails/"
+        url: http://localhost:8080/thumbnail/

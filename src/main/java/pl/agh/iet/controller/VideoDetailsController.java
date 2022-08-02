@@ -5,8 +5,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import pl.agh.iet.influxdb.StaticInfluxDbClient;
 import pl.agh.iet.model.GetVideoDetailsListResponse;
-import pl.agh.iet.model.SearchStreamRequest;
+import pl.agh.iet.model.SearchVideoRequest;
 import pl.agh.iet.service.video.VideoService;
 
 import javax.validation.Valid;
@@ -22,11 +23,13 @@ public class VideoDetailsController {
 
     @GetMapping
     public ResponseEntity<GetVideoDetailsListResponse> getVideoDetailsList() {
+//        StaticInfluxDbClient.incrementRequestCounter();
+//        log.info("Current counter: {}", StaticInfluxDbClient.getCurrentRequestCounter());
         return ResponseEntity.ok(videoService.getVideoDetailsList());
     }
 
     @PostMapping(value = "/search", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-    public ResponseEntity<GetVideoDetailsListResponse> addVideo(@Valid @ModelAttribute SearchStreamRequest request) {
+    public ResponseEntity<GetVideoDetailsListResponse> addVideo(@Valid @ModelAttribute SearchVideoRequest request) {
         return ResponseEntity.ok(videoService.filterStreams(request));
     }
 }

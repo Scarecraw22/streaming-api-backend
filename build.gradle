@@ -1,14 +1,46 @@
 plugins {
     id 'groovy'
     id 'java'
+//    id 'com.coditory.manifest' version '0.2.0'
+    id 'org.springframework.boot' version '2.6.3'
+    id 'io.spring.dependency-management' version '1.0.11.RELEASE'
 }
 
-group 'org.example'
+group 'pl.agh.iet'
 version '1.0-SNAPSHOT'
 
 repositories {
     mavenCentral()
 }
+
+jar {
+//    from {
+//        configurations.runtime.collect { it.isDirectory() ? it : zipTree(it) }
+//    }
+
+    manifest {
+        attributes('Main-Class': 'pl.agh.iet.App')
+    }
+}
+
+//application {
+//    mainClass = 'pl.agh.iet.App'
+//}
+
+configurations {
+    extraLibs
+}
+
+//task fatJar(type: Jar) {
+//    manifest {
+//        attributes 'Main-Class': 'pl.agh.iet.App',
+//        'Implementation-Title': 'Gradle Jar File Example',
+//                'Implementation-Version': version
+//    }
+//    baseName = project.name + '-all'
+//    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+//    with jar
+//}
 
 def brampFfmpegVersion = '0.6.2'
 def groovyVersion = '3.0.9'
@@ -20,6 +52,10 @@ def spockVersion = '2.1-M2-groovy-3.0'
 def slf4jVersion = '1.7.32'
 def commonsFileuploadVersion = '1.4'
 def testcontainersVersion = '1.16.3'
+def influxDbClientVersion = '5.0.0'
+def prometheusVersion = '1.9.0'
+
+
 
 dependencies {
     implementation group: 'org.codehaus.groovy', name: 'groovy-all', version: groovyVersion
@@ -36,6 +72,7 @@ dependencies {
     implementation group: 'org.springframework.boot', name: 'spring-boot', version: springBootVersion
     implementation group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: springBootVersion
     implementation group: 'org.springframework.boot', name: 'spring-boot-starter', version: springBootVersion
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-actuator', version: springBootVersion
     implementation group: 'org.springframework.boot', name: 'spring-boot-starter-validation', version: springBootVersion
     implementation group: 'org.springframework.boot', name: 'spring-boot-starter-data-mongodb', version: springBootVersion
     testImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: springBootVersion
@@ -45,6 +82,12 @@ dependencies {
     annotationProcessor group: 'org.projectlombok', name: 'lombok', version: lombokVersion
     testImplementation group: 'org.projectlombok', name: 'lombok', version: lombokVersion
     testAnnotationProcessor group: 'org.projectlombok', name: 'lombok', version: lombokVersion
+
+    // Influxdb
+    implementation group: 'com.influxdb', name: 'influxdb-client-java', version: influxDbClientVersion
+
+    // Prometheus
+    implementation group: 'io.micrometer', name: 'micrometer-registry-prometheus', version: prometheusVersion
 
     // Slf4j
     implementation group: 'org.slf4j', name: 'slf4j-api', version: slf4jVersion

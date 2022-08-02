@@ -10,7 +10,7 @@ import pl.agh.iet.db.MetadataEntity;
 import pl.agh.iet.db.repository.MetadataRepository;
 import pl.agh.iet.ffmpeg.FfmpegProperties;
 import pl.agh.iet.model.GetVideoDetailsListResponse;
-import pl.agh.iet.model.SearchStreamRequest;
+import pl.agh.iet.model.SearchVideoRequest;
 import pl.agh.iet.service.streaming.hls.HlsMasterLinkCreator;
 import pl.agh.iet.service.thumbnail.ThumbnailLinkCreator;
 
@@ -61,7 +61,7 @@ public class VideoServiceImpl implements VideoService {
     }
 
     @Override
-    public GetVideoDetailsListResponse filterStreams(SearchStreamRequest request) {
+    public GetVideoDetailsListResponse filterStreams(SearchVideoRequest request) {
 
         log.info("Starting to search streams with properties: {}", request);
 

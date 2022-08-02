@@ -20,7 +20,7 @@ import pl.agh.iet.db.repository.MetadataRepository
 import pl.agh.iet.ffmpeg.FfmpegProperties
 import pl.agh.iet.initializers.MongoDbTestInitializer
 import pl.agh.iet.mocks.MockCreateStreamRequest
-import pl.agh.iet.model.CreateStreamResponse
+import pl.agh.iet.model.AddVideoResponse
 import pl.agh.iet.model.GetVideoDetailsListResponse
 import pl.agh.iet.service.thumbnail.ThumbnailProperties
 import pl.agh.iet.utils.FileUtils
@@ -125,10 +125,10 @@ abstract class AbstractControllerIT extends Specification {
     protected String createStreamAndExpectOkThenReturnId(String streamName, String title, String description) {
         MockCreateStreamRequest createStreamRequest = createStreamRequest(streamName, title, description)
 
-        CreateStreamResponse response = withRequestBuilder(buildStreamRequest(createStreamRequest))
+        AddVideoResponse response = withRequestBuilder(buildStreamRequest(createStreamRequest))
                 .execute()
                 .expectOk()
-                .getResponseBodyAs(CreateStreamResponse.class)
+                .getResponseBodyAs(AddVideoResponse.class)
 
         return response.getId()
     }
@@ -194,5 +194,35 @@ abstract class AbstractControllerIT extends Specification {
                 .getDetailsList()
 
         return detailsList;
+    }
+
+    protected GetVideoDetailsListResponse getAll() {
+        GetVideoDetailsListResponse videoDetailsResponse = get()
+                .url("/video-details")
+                .withHeaders(Map.of(HttpHeaders.ORIGIN, "http://any-origin.pl"))
+                .execute()
+                .expectOk()
+                .getResponseBodyAs(GetVideoDetailsListResponse.class)
+
+        return videoDetailsResponse
+    }
+
+    protected void deleteAll() {
+        Optional.of(getAll())
+                .map(details -> details.getDetailsList())
+                .orElse([])
+                .stream()
+                .map(details -> details.getId())
+                .forEach(id -> {
+                    delete()
+                            .url("/streaming-api")
+                            .withHeaders(Map.of(HttpHeaders.ORIGIN, "http://any-origin.pl"))
+                            .withBody("""
+{
+    "id": "$id"
+}1
+""")
+                            .execute()
+                })
     }
 }

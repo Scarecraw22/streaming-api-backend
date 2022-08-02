@@ -1,9 +1,40 @@
+logging:
+  level:
+    org:
+      springframework:
+        web:
+          filter:
+            CommonsRequestLoggingFilter: TRACE
+        data:
+          mongodb:
+            core:
+              MongoTemplate: DEBUG
+            repository:
+              query: DEBUG
+
 spring:
   jpa:
     show-sql: true
   logging:
     level:
       ROOT: DEBUG
+  servlet:
+    multipart:
+      max-file-size: 200MB
+      max-request-size: 200MB
+
+server:
+  tomcat:
+    max-http-post-size: 2000000000
+    max-swallow-size: 2000000000
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+    health:
+      show-details: always
 
 pl:
   agh:

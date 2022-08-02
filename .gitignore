@@ -215,6 +215,7 @@ fabric.properties
 
 # Log file
 *.log
+logs
 
 # BlueJ files
 *.ctxt
@@ -291,3 +292,5 @@ gradle-app.setting
 # JDT-specific (Eclipse Java Development Tools)
 
 # End of https://www.toptal.com/developers/gitignore/api/java,git,gradle,maven,scala,groovy,intellij,eclipse,sbt
+
+mongo-volume
